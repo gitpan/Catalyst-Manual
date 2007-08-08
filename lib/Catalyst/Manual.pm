@@ -4,6 +4,9 @@
 
 package Catalyst::Manual;
 
+use strict;
+use warnings;
+
 =head1 NAME
 
 Catalyst::Manual - The Catalyst developer's manual
@@ -21,6 +24,6 @@ Tutorial.
 
 =cut
 
-our $VERSION = '5.700701';
+our $VERSION = '5.700704';
 
 1;
