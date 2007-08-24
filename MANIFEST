@@ -10,7 +10,6 @@ inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
-lib/Catalyst/Manual.pm
 lib/Catalyst/Manual/About.pod
 lib/Catalyst/Manual/Actions.pod
 lib/Catalyst/Manual/Cookbook.pod
@@ -30,6 +29,7 @@ lib/Catalyst/Manual/Tutorial/Debugging.pod
 lib/Catalyst/Manual/Tutorial/Intro.pod
 lib/Catalyst/Manual/Tutorial/Testing.pod
 lib/Catalyst/Manual/WritingPlugins.pod
+lib/Catalyst/ManualPlaceholder.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
