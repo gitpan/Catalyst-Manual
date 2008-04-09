@@ -1,8 +1,9 @@
 --- 
 abstract: The Catalyst developer's manual
-author: Jonathan Rockway <jrockway@cpan.org>
+author: 
+  - Jonathan Rockway <jrockway@cpan.org>
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.68
 license: perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -14,4 +15,4 @@ no_index:
     - t
 requires: 
   Test::More: 0
-version: 5.701003
+version: 5.701004
