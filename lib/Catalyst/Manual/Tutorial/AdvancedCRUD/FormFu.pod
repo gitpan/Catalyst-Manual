@@ -1,0 +1,701 @@
+=head1 NAME
+
+Catalyst::Manual::Tutorial::AdvancedCRUD::FormFu - Catalyst Tutorial - Part 9: Advanced CRUD - FormFu
+
+
+NOTE:  This part of the tutorial is in progress and will be ready soon.
+
+=head1 OVERVIEW
+
+This is B<Part 9 of 10> for the Catalyst tutorial.
+
+L<Tutorial Overview|Catalyst::Manual::Tutorial>
+
+=over 4
+
+=item 1
+
+L<Introduction|Catalyst::Manual::Tutorial::Intro>
+
+=item 2
+
+L<Catalyst Basics|Catalyst::Manual::Tutorial::CatalystBasics>
+
+=item 3
+
+L<More Catalyst Basics|Catalyst::Manual::Tutorial::MoreCatalystBasics>
+
+=item 4
+
+L<Basic CRUD|Catalyst::Manual::Tutorial::BasicCRUD>
+
+=item 5
+
+L<Authentication|Catalyst::Manual::Tutorial::Authentication>
+
+=item 6
+
+L<Authorization|Catalyst::Manual::Tutorial::Authorization>
+
+=item 7
+
+L<Debugging|Catalyst::Manual::Tutorial::Debugging>
+
+=item 8
+
+L<Testing|Catalyst::Manual::Tutorial::Testing>
+
+=item 9
+
+B<Advanced CRUD::FormFu>
+
+=item 10
+
+L<Appendices|Catalyst::Manual::Tutorial::Appendices>
+
+=back
+
+
+=head1 DESCRIPTION
+
+This portion of the tutorial explores L<HTML::FormFu|HTML::FormFu> and 
+how it can be used to manage forms, perform validation of form input, 
+as well as save and restore data to/from the database.
+
+See 
+L<Catalyst::Manual::Tutorial::AdvancedCRUD|Catalyst::Manual::Tutorial::AdvancedCRUD>
+for additional form management options other than 
+L<HTML::FormFu|HTML::FormFu>.
+
+
+=head1 Install C<HTML::FormFu>
+
+If you are following along in Ubuntu, it turns out that C<HTML::FormFu> 
+is not yet available as a package at the time this was written.  To 
+install it with a combination of C<apt-get> packages and traditional 
+CPAN modules, first use C<apt-get> to install most of the modules 
+required by C<HTML::FormFu>:
+
+    sudo apt-get install libtest-nowarnings-perl libdatetime-format-builder-perl \
+    libdatetime-format-strptime-perl libdatetime-locale-perl \
+    libhtml-tokeparser-simple-perl liblist-moreutils-perl \
+    libregexp-copy-perl libregexp-common-perl libyaml-syck-perl libparams-util-perl
+
+Then use the following command to install directly from CPAN the modules 
+that aren't available as Ubuntu/Debian packages via C<apt-get>:
+
+    sudo cpan File::ShareDir Task::Weaken Config::Any HTML::FormFu \
+    Catalyst::Controller::HTML::FormFu
+
+
+=head1 C<HTML::FormFu> FORM CREATION
+
+This section looks at how L<HTML::FormFu|HTML::FormFu> can be used to 
+add additional functionality to the manually created form from Part 4.
+
+
+=head2 Inherit From C<Catalyst::Controller::HTML::FormFu>
+
+First, change your C<lib/MyApp/Controller/Books.pm> to inherit from
+L<Catalyst::Controller::HTML::FormFu|Catalyst::Controller::HTML::FormFu>
+by changing the C<use base> line from the default of:
+
+    use base 'Catalyst::Controller';
+
+to use the FormFu base controller class:
+
+    use base 'Catalyst::Controller::HTML::FormFu';
+
+
+=head2 Add Action to Display and Save the Form
+
+Open C<lib/MyApp/Controller/Books.pm> in your editor and add the
+following method:
+
+    =head2 formfu_create
+    
+    Use HTML::FormFu to create a new book
+    
+    =cut
+    
+    sub formfu_create :Local :FormConfig {
+        my ($self, $c) = @_;
+    
+        # Get the form that the :FormConfig attribute saved in the stash
+        my $form = $c->stash->{form};
+  
+        # Check if the form as been submitted (vs. displaying the initial
+        # form) and if the data based validation.  "submitted_and_valid"
+        # is shorthand for "$form->submitted && !$form->has_errors"
+        if ($form->submitted_and_valid) {
+            # Create a new book
+            my $book = $c->model('DB::Books')->new_result({});
+            # Save the form data for the book
+            $form->save_to_model($book);
+            # Set a status message for the user
+            $c->flash->{status_msg} = 'Book created';
+            # Return to the books list
+            $c->response->redirect($c->uri_for('list')); 
+            $c->detach;
+        } else {
+            # Get the authors from the DB
+            my @authorObjs = $c->model("DB::Authors")->all();
+            # Create an array of arrayrefs where each arrayref is an author
+            my @authors;
+            foreach (sort {$a->last_name cmp $b->last_name} @authorObjs) {
+                push(@authors, [$_->id, $_->last_name]);
+            }
+            # Get the select added by the config file
+            my $select = $form->get_element({type => 'Select'});
+            # Add the authors to it
+            $select->options(\@authors);
+        }
+        
+        # Set the template
+        $c->stash->{template} = 'books/formfu_create.tt2';
+    }
+
+
+=head2 Create a Form Config File
+
+Although C<HTML::FormFu> supports any configuration file handled by
+L<Config::Any|Config::Any>, most people tend to use YAML.  First
+create a directory to hold your form configuration files:
+
+    mkdir -p root/forms/books
+
+Then create the file C<root/forms/books/formfu_create.yml> and enter the 
+following text:
+
+    ---
+    # indicator is the field that is used to test for form submission
+    indicator: submit
+    # Start listing the form elements
+    elements:
+        # The first element will be a text field for the title
+        - type: Text
+          name: title
+          label: Title
+          # This is an optional 'mouse over' title pop-up
+          attributes:
+            title: Enter a book title here
+    
+        # Another text field for the numeric rating
+        - type: Text
+          name: rating
+          label: Rating
+          attributes:
+            title: Enter a rating between 1 and 5 here
+    
+        # Add a drop-down list for the author selection.  Note that we will
+        # dynamically fill in all the authors from the controller but we
+        # could manually set items in the drop-list by adding this YAML code:
+        # options:
+        #   - [ '1', 'Bastien' ]
+        #   - [ '2', 'Nasseh'  ]
+        - type: Select
+          name: authors
+          label: Author
+    
+        # The submit button
+        - type: Submit
+          name: submit
+          value: Submit
+
+B<NOTE:> Copying and pasting YAML from perl documentation is sometimes
+tricky.  See the L<Copy-Paste versions of the YAML Config> section of
+this document for a foolproof procedure.
+
+
+=head2 Update the CSS
+
+Edit C<root/src/ttsite.css> and add the following lines to the bottom of
+the file:
+
+    input {
+        display: block;
+    }
+    select {
+        display: block;
+    }
+    .submit {
+        padding-top: .5em;
+        display: block;
+    }
+
+These changes will display form elements vertically.  Note that the 
+existing definition of the C<.error> class is pulling the color scheme 
+settings from the C<root/lib/config/col> file that was created by the 
+TTSite helper.  This allows control over the CSS color settings from a 
+single location.
+
+
+=head2 Create a Template Page To Display The Form
+
+Open C<root/src/books/formfu_create.tt2> in your editor and enter the following:
+
+    [% META title = 'Create/Update Book' %]
+    
+    [%# Render the HTML::FormFu Form %]
+    [% form %]
+    
+    <p><a href="[% Catalyst.uri_for('list') %]">Return to book list</a></p>
+
+
+=head2 Add Links for Create and Update via C<HTML::FormFu>
+
+Open C<root/src/books/list.tt2> in your editor and add the following to
+the bottom of the existing file:
+
+    <p>
+      HTML::FormFu:
+      <a href="[% Catalyst.uri_for('formfu_create') %]">Create</a>
+    </p>
+
+This adds a new link to the bottom of the book list page that we can
+use to easily launch our HTML::FormFu-based form.
+
+
+=head2 Test The <HTML::FormFu> Create Form
+
+Press C<Ctrl-C> to kill the previous server instance (if it's still
+running) and restart it:
+
+    $ script/myapp_server.pl
+
+Login as C<test01> (password: mypass).  Once at the Book List page,
+click the new HTML::FormFu "Create" link at the bottom to display the
+form.  Fill in the following values: Title = "Internetworking with
+TCP/IP Vol. II", Rating = "4", and Author = "Comer".  Click Submit,
+and you will be returned to the Book List page with a "Book created"
+status message displayed.
+
+Also note that this implementation allows you to can create books with 
+bogus information.  Although we have constrained the authors with the 
+drop-down list (note that this isn't bulletproof because we still have 
+not prevented a user from "hacking" the form to specify other values), 
+there are no restrictions on items such as the length of the title (for 
+example, you can create a one-letter title) and value for the rating 
+(you can use any number you want, and even non-numeric values with 
+SQLite).  The next section will address this concern.
+
+B<Note:> Depending on the database you are using and how you established
+the columns in your tables, the database could obviously provide various
+levels of "type enforcement" on your data.  The key point being made in
+the previous paragraph is that the I<web application> itself is not
+performing any validation.
+
+
+=head1 C<HTML::FormFu> VALIDATION AND FILTERING
+
+Although the use of L<HTML::FormFu|HTML::FormFu> in the previous section 
+did provide an automated mechanism to build the form, the real power of 
+this module stems from functionality that can automatically validate and 
+filter the user input.  Validation uses constraints to be sure that 
+users input appropriate data (for example, that the email field of a 
+form contains a valid email address).  Filtering can also be used to 
+remove extraneous whitespace from fields or to escape meta-characters in 
+user input.
+
+
+=head2 Add Constraints
+
+Open C<root/forms/books/formfu_create.yml> in your editor and update it 
+to match:
+
+    ---
+    # indicator is the field that is used to test for form submission
+    indicator: submit
+    # Start listing the form elements
+    elements:
+        # The first element will be a text field for the title
+        - type: Text
+          name: title
+          label: Title
+          # This is an optional 'mouse over' title pop-up
+          attributes:
+            title: Enter a book title here
+          # Use Filter to clean up the input data
+          filter:
+            # Remove whitespace at both ends
+            - TrimEdges
+            # Escape HTML characters for safety
+            - HTMLEscape
+          # Add constraints for the field
+          constraints:
+            # The user cannot leave this field blank
+            - SingleValue
+            # Force the length to be between 5 and 40 chars
+            - type: Length
+              min: 5
+              max: 40
+              # Override the default of 'Invalid input'
+              message: Length must be between 5 and 40 characters
+    
+        # Another text field for the numeric rating
+        - type: Text
+          name: rating
+          label: Rating
+          attributes:
+            title: Enter a rating between 1 and 5 here
+          # Use Filter to clean up the input data
+          filter:
+            # Remove whitespace at both ends
+            - TrimEdges
+            # Remove everything except digits
+            - NonNumeric
+          # Add constraints to the field
+          constraints:
+            - SingleValue
+            # Make sure it's a number
+            - Integer
+    
+        # Add a select list for the author selection.  Note that we will
+        # dynamically fill in all the authors from the controller but we
+        # could manually set items in the select by adding this YAML code:
+        # options:
+        #   - [ '1', 'Bastien' ]
+        #   - [ '2', 'Nasseh'  ]
+        - type: Select
+          name: authors
+          label: Author
+          # Convert the drop-down to a multi-select list
+          multiple: 1
+          # Display 3 entries (user can scroll to see others)
+          size: 3
+          # One could argue we don't need to do filters or constraints for
+          # a select list, but it's smart to do validation and sanity
+          # checks on this data in case a user "hacks" the input
+          # Use Filter to clean up the input data
+          filter:
+            # Remove whitespace at both ends
+            - TrimEdges
+            # Escape HTML characters for safety
+            - HTMLEscape
+          # Add constraints to the field
+          constraints:
+            # Make sure it's a number
+            - Integer
+    
+        # The submit button
+        - type: Submit
+          name: submit
+          value: Submit
+    
+    # Globally ensure that each field only specified one value
+    constraints:
+        # The user cannot leave any fields blank
+        - Required
+
+B<NOTE:> Copying and pasting YAML from perl documentation is sometimes
+tricky.  See the L<Copy-Paste versions of the YAML Config> section of
+this document for a foolproof procedure.
+
+The main changes are:
+
+=over 4
+
+=item *
+
+The C<Select> element for C<authors> is changed from a single-select
+drop-down to a multi-select list by adding configuration for the 
+C<multiple> and C<size> options in C<formfu_create.yml>.
+
+=item *
+
+Constraints are added to provide validation of the user input.  See
+L<HTML::FormFu::Constraint|HTML::FormFu::Constraint> for other
+constraints that are available.
+
+=item *
+
+A variety of filters are run on every field to remove and escape 
+unwanted input.  See L<HTML::FormFu::Filter|HTML::FormFu::Filter>
+for more filter options.
+
+=back
+
+
+=head2 Try Out the Updated Form
+
+Press C<Ctrl-C> to kill the previous server instance (if it's still 
+running) and restart it:
+
+    $ script/myapp_server.pl
+
+Make sure you are still logged in as C<test01> and try adding a book 
+with various errors: title less than 5 characters, non-numeric rating, a 
+rating of 0 or 6, etc.  Also try selecting one, two, and zero authors. 
+When you click Submit, the HTML::FormFu C<constraint> items will 
+validate the logic and insert feedback as appropriate.  Try adding blank 
+spaces at the front or the back of the title and note that it will be 
+removed.
+
+
+=head1 CREATE AND UPDATE/EDIT ACTION
+
+Let's expand the work done above to add an edit action.  First, open 
+C<lib/MyApp/Controller/Books.pm> and add the following method to the 
+bottom:
+
+    =head2 formfu_edit
+    
+    Use HTML::FormFu to update an existing book
+    
+    =cut
+    
+    sub formfu_edit :Local :FormConfig('books/formfu_create.yml') {
+        my ($self, $c, $id) = @_;
+    
+        # Get the specified book
+        my $book = $c->model('DB::Books')->find($id);
+    
+        # Make sure we were able to get a book
+        unless ($book) {
+            $c->flash->{error_msg} = "Invalid book -- Cannot edit";
+            $c->response->redirect($c->uri_for('list'));
+            $c->detach;
+        }
+    
+        # Get the form that the :FormConfig attribute saved in the stash
+        my $form = $c->stash->{form};
+    
+        # Check if the form as been submitted (vs. displaying the initial
+        # form) and if the data based validation.  "submitted_and_valid"
+        # is shorthand for "$form->submitted && !$form->has_errors"
+        if ($form->submitted_and_valid) {
+            # Save the form data for the book
+            $form->save_to_model($book);
+            # Set a status message for the user
+            $c->flash->{status_msg} = 'Book edited';
+            # Return to the books list
+            $c->response->redirect($c->uri_for('list'));
+            $c->detach;
+        } else {
+            # Get the authors from the DB
+            my @authorObjs = $c->model("DB::Authors")->all();
+            # Create an array of arrayrefs where each arrayref is an author
+            my @authors;
+            foreach (sort {$a->last_name cmp $b->last_name} @authorObjs) {
+                push(@authors, [$_->id, $_->last_name]);
+            }
+            # Get the select added by the config file
+            my $select = $form->get_element({type => 'Select'});
+            # Add the authors to it
+            $select->options(\@authors);
+            # Populate the form with existing values from DB
+            $form->defaults_from_model($book);
+        }
+    
+        # Set the template
+        $c->stash->{template} = 'books/formfu_create.tt2';
+    }
+
+Most of this code should look familiar to what we used in the 
+C<formfu_create> method (in fact, we should probably centralize some of 
+the common code in separate methods).  The main differences are:
+
+=over 4
+
+=item *
+
+We accept C<$id> as an argument via the URL.
+
+=item *
+
+We use C<$id> to look up the existing book from the database.
+
+=item *
+
+We make sure the C<$id> and book lookup returned a valid book.  If not, 
+we set the error message and return to the book list.
+
+=item *
+
+If the form has been submitted and passes validation, we skip creating a 
+new book and just use C<$form-E<gt>save_to_model> to update the existing 
+book.
+
+=item *
+
+If the form is being displayed for the first time (or has failed 
+validation and it being redisplayed), we use
+ C<$form-E<gt>default_from_model> to populate the form with data from the 
+database.
+
+=back
+
+Then, edit C<root/src/books/list.tt2> and add a new link below the 
+existing "Delete" link that allows us to edit/update each existing book. 
+The last E<lt>tdE<gt> cell in the book list table should look like the 
+following:
+
+    <td>
+      [% # Add a link to delete a book %]
+      <a href="[% Catalyst.uri_for('delete', book.id) %]">Delete</a>
+      [% # Add a link to edit a book %]
+      <a href="[% Catalyst.uri_for('formfu_edit', book.id) %]">Edit</a>
+    </td>
+
+
+=head2 Try Out the Edit/Update Feature
+
+Press C<Ctrl-C> to kill the previous server instance (if it's still 
+running) and restart it:
+
+    $ script/myapp_server.pl
+
+Make sure you are still logged in as C<test01> and go to the 
+L<http://localhost:3000/books/list> URL in your browser.  Click the 
+"Edit" link next to "Internetworking with TCP/IP Vol. II", change the 
+rating to a 3, the "II" at end of the title to the number "2", add 
+Stevens as a co-author (control-click), and click Submit.  You will then 
+be returned to the book list with a "Book edited" message at the top in 
+green.  Experiment with other edits to various books.
+
+
+=head2 Copy-Paste versions of the YAML Config.
+
+YAML, the config format used in formfu depends on whitespace and can
+behave strangely in perl documentation because POD is also whitespace
+dependent.  If you copy and paste the YAML below into the file
+C<root/forms/books/formfu_create.yml> and then run the following perl
+oneliner, you're pretty much guaranteed to get valid YAML:
+
+ $ perl -p -i -e 's/\s+\|//g' root/forms/books/formfu_create.yml
+
+=head2 YAML for the first half of the tutorial:
+
+    |---
+    |# indicator is the field that is used to test for form submission
+    |indicator: submit
+    |# Start listing the form elements
+    |elements:
+    |    # The first element will be a text field for the title
+    |    - type: Text
+    |      name: title
+    |      label: Title
+    |      # This is an optional 'mouse over' title pop-up
+    |      attributes:
+    |        title: Enter a book title here
+    |
+    |    # Another text field for the numeric rating
+    |    - type: Text
+    |      name: rating
+    |      label: Rating
+    |      attributes:
+    |        title: Enter a rating between 1 and 5 here
+    |
+    |    # Add a drop-down list for the author selection.  Note that we will
+    |    # dynamically fill in all the authors from the controller but we
+    |    # could manually set items in the drop-list by adding this YAML code:
+    |    # options:
+    |    #   - [ '1', 'Bastien' ]
+    |    #   - [ '2', 'Nasseh'  ]
+    |    - type: Select
+    |      name: authors
+    |      label: Author
+    |
+    |    # The submit button
+    |    - type: Submit
+    |      name: submit
+    |      value: Submit
+
+
+=head2  YAML for the second part of the tutorial
+
+    |---
+    |# indicator is the field that is used to test for form submission
+    |indicator: submit
+    |# Start listing the form elements
+    |elements:
+    |    # The first element will be a text field for the title
+    |    - type: Text
+    |      name: title
+    |      label: Title
+    |      # This is an optional 'mouse over' title pop-up
+    |      attributes:
+    |        title: Enter a book title here
+    |      # Use Filter to clean up the input data
+    |      filter:
+    |        # Remove whitespace at both ends
+    |        - TrimEdges
+    |        # Escape HTML characters for safety
+    |        - HTMLEscape
+    |      # Add constraints for the field
+    |      constraints:
+    |        # The user cannot leave this field blank
+    |        - SingleValue
+    |        # Force the length to be between 5 and 40 chars
+    |        - type: Length
+    |          min: 5
+    |          max: 40
+    |          # Override the default of 'Invalid input'
+    |          message: Length must be between 5 and 40 characters
+    |
+    |    # Another text field for the numeric rating
+    |    - type: Text
+    |      name: rating
+    |      label: Rating
+    |      attributes:
+    |        title: Enter a rating between 1 and 5 here
+    |      # Use Filter to clean up the input data
+    |      filter:
+    |        # Remove whitespace at both ends
+    |        - TrimEdges
+    |        # Remove everything except digits
+    |        - NonNumeric
+    |      # Add constraints to the field
+    |      constraints:
+    |        - SingleValue
+    |        # Make sure it's a number
+    |        - Integer
+    |
+    |    # Add a select list for the author selection.  Note that we will
+    |    # dynamically fill in all the authors from the controller but we
+    |    # could manually set items in the select by adding this YAML code:
+    |    # options:
+    |    #   - [ '1', 'Bastien' ]
+    |    #   - [ '2', 'Nasseh'  ]
+    |    - type: Select
+    |      name: authors
+    |      label: Author
+    |      # Convert the drop-down to a multi-select list
+    |      multiple: 1
+    |      # Display 3 entries (user can scroll to see others)
+    |      size: 3
+    |      # One could argue we don't need to do filters or constraints for
+    |      # a select list, but it's smart to do validation and sanity
+    |      # checks on this data in case a user "hacks" the input
+    |      # Use Filter to clean up the input data
+    |      filter:
+    |        # Remove whitespace at both ends
+    |        - TrimEdges
+    |        # Escape HTML characters for safety
+    |        - HTMLEscape
+    |      # Add constraints to the field
+    |      constraints:
+    |        # Make sure it's a number
+    |        - Integer
+    |
+    |    # The submit button
+    |    - type: Submit
+    |      name: submit
+    |      value: Submit
+    |
+    |# Globally ensure that each field only specified one value
+    |constraints:
+    |    # The user cannot leave any fields blank
+    |    - Required
+
+=head1 AUTHOR
+
+Kennedy Clark, C<hkclark@gmail.com>
+
+Please report any errors, issues or suggestions to the author.  The
+most recent version of the Catalyst Tutorial can be found at
+L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/Catalyst-Manual/lib/Catalyst/Manual/Tutorial/>.
+
+Copyright 20066-2008, Kennedy Clark, under Creative Commons License
+(L<http://creativecommons.org/licenses/by-nc-sa/2.5/>).
+    

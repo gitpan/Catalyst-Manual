@@ -21,6 +21,8 @@ lib/Catalyst/Manual/Intro.pod
 lib/Catalyst/Manual/Plugins.pod
 lib/Catalyst/Manual/Tutorial.pod
 lib/Catalyst/Manual/Tutorial/AdvancedCRUD.pod
+lib/Catalyst/Manual/Tutorial/AdvancedCRUD/FormBuilder.pod
+lib/Catalyst/Manual/Tutorial/AdvancedCRUD/FormFu.pod
 lib/Catalyst/Manual/Tutorial/Appendices.pod
 lib/Catalyst/Manual/Tutorial/Authentication.pod
 lib/Catalyst/Manual/Tutorial/Authorization.pod
@@ -28,6 +30,7 @@ lib/Catalyst/Manual/Tutorial/BasicCRUD.pod
 lib/Catalyst/Manual/Tutorial/CatalystBasics.pod
 lib/Catalyst/Manual/Tutorial/Debugging.pod
 lib/Catalyst/Manual/Tutorial/Intro.pod
+lib/Catalyst/Manual/Tutorial/MoreCatalystBasics.pod
 lib/Catalyst/Manual/Tutorial/Testing.pod
 lib/Catalyst/Manual/WritingPlugins.pod
 Makefile.PL

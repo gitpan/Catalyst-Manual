@@ -1,5 +1,5 @@
 abstract: The Catalyst developer's manual
-author: Jonathan Rockway <jrockway@cpan.org>
+author: Kieren Diment <zarquon@cpan.org>
 distribution_type: module
 generated_by: Module::Install version 0.64
 license: perl
@@ -10,4 +10,4 @@ no_index:
     - t
 requires: 
   Test::More: 0
-version: 5.7011
+version: 5.7012
