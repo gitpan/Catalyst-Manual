@@ -87,7 +87,7 @@ tutorial):
     $ cd MyApp
 
 This creates a similar skeletal structure to what we saw in Part 2 of 
-the tutorial, except with C<MyApp> or C<myapp> substituted for 
+the tutorial, except with C<MyApp> and C<myapp> substituted for 
 C<Hello> and C<hello>.
 
 
@@ -186,12 +186,12 @@ with:
 Replace it with:
 
     use Catalyst qw/
-            -Debug
-            ConfigLoader
-            Static::Simple
-            
-            StackTrace
-            /;
+                   -Debug
+                   ConfigLoader
+                   Static::Simple
+
+                   StackTrace
+                  /;
 
 This tells Catalyst to start using one new plugin:
 
@@ -272,7 +272,7 @@ Catalyst components.  It is used to pass information between
 components and provide access to Catalyst and plugin functionality.
 
 B<TIP>: You may see the C<$c-E<gt>model('DB::Book')> used above
-written as C<$c-E<gt>model('DB')-E<gt>resultset('Book)>.  The two
+written as C<$c-E<gt>model('DB')-E<gt>resultset('Book')>.  The two
 are equivalent.
 
 B<Note:> Catalyst actions are regular Perl methods, but they make use 
@@ -309,7 +309,7 @@ TT (for more information on TT, see
 L<http://www.template-toolkit.org>). Other popular view technologies 
 include Mason (L<http://www.masonhq.com> and 
 L<http://www.masonbook.com>) and L<HTML::Template> 
-(L<http://html- template.sourceforge.net>).
+(L<http://html-template.sourceforge.net>).
 
 =head2 Create a Catalyst View Using C<TTSite>
 
@@ -361,30 +361,12 @@ directories that can be used to customize the look and feel of your
 application.  Also take a look at C<lib/MyApp/View/TT.pm> for config
 values set by the C<TTSite> helper.
 
-B<TIP>: Note that TTSite does one thing that could confuse people who
-are used to the normal C<TT> Catalyst view: it redefines the Catalyst
-context object in templates from its usual C<c> to C<Catalyst>. When
-looking at other Catalyst examples, remember that they almost always use
-C<c>.  Note that Catalyst and TT I<do not complain> when you use the
-wrong name to access the context object...TT simply outputs blanks for
-that bogus logic (see next tip to change this behavior with TT C<DEBUG>
-options).  Finally, be aware that this change in name I<only>
-applies to how the context object is accessed inside your TT templates;
-your controllers will continue to use C<$c> (or whatever name you use
-when fetching the reference from C<@_> inside your methods). (You can
-change back to the "default" behavior be removing the C<CATALYST_VAR>
-line from C<lib/MyApp/View/TT.pm>, but you will also have to edit
-C<root/lib/config/main> and C<root/lib/config/url>.  If you do this, be
-careful not to have a collision between your own C<c> variable and the
-Catalyst C<c> variable.)
-
 B<TIP>: When troubleshooting TT it can be helpful to enable variable
 C<DEBUG> options.  You can do this in a Catalyst environment by adding
 a C<DEBUG> line to the C<__PACKAGE__->config> declaration in 
 C<lib/MyApp/View/TT.pm>:
 
     __PACKAGE__->config({
-        CATALYST_VAR => 'Catalyst',
         ...
         DEBUG        => 'undef',
         ...
@@ -395,7 +377,7 @@ of the package where it is used.  Therefore, in C<TT.pm>,
 C<__PACKAGE__> is equivalent to C<TT>.
 
 There are a variety of options you can use, such as 'undef', 'all', 
-'service', 'context', 'parser', 'provider', and 'service'.  See
+'service', 'context', 'parser' and 'provider'.  See
 L<Template::Constants> for more information (remove the C<DEBUG_>
 portion of the name shown in the TT docs and convert to lower case
 for use inside Catalyst).
@@ -745,7 +727,7 @@ used the following SQL to retrieve the data:
 
 because we enabled DBIC_TRACE.
 
-You now the beginnings of a simple but workable web application. 
+You now have the beginnings of a simple but workable web application.
 Continue on to future sections and we will develop the application
 more fully.
 

@@ -62,7 +62,7 @@ nifty statistics in your debug messages.
 =head2 Enable debug status in the environment
 
 Normally you enable the debugging info by adding the C<-Debug> flag to
-your C<use Catalyst> statement. However, you can also enable it using
+your C<use Catalyst> statement . However, you can also enable it using
 environment variable, so you can (for example) get debug info without
 modifying your application scripts. Just set C<CATALYST_DEBUG> or
 C<E<lt>MYAPPE<gt>_DEBUG> to a true value.
@@ -112,11 +112,12 @@ reference.
 
 =head3 EXAMPLE
 
-  use Catalyst qw/
-                 Session
-                 Session::Store::FastMmap
-                 Session::State::Cookie
-                 /;
+  use parent qw/Catalyst/;
+  use Catalyst  qw/
+                         Session
+                         Session::Store::FastMmap
+                         Session::State::Cookie
+                   /;
 
 
   ## Write data into the session
@@ -266,12 +267,12 @@ in the previous example.
 The L<Catalyst::Plugin::Authorization::Roles> plugin is required when
 implementing roles:
 
+ use parent qw/Catalyst/;
  use Catalyst qw/
-    Authentication
-    Authentication::Credential::Password
-    Authentication::Store::Htpasswd
-    Authorization::Roles
-  /;
+     Authentication
+     Authentication::Credential::Password
+     Authentication::Store::Htpasswd
+     Authorization::Roles/;
 
 Roles are implemented automatically when using
 L<Catalyst::Authentication::Store::Htpasswd>:
@@ -400,6 +401,7 @@ the user is a member.
 
 =head3 EXAMPLE
 
+ use parent qw/Catalyst/;
  use Catalyst qw/Authentication
                  Authentication::Credential::Password
                  Authentication::Store::Htpasswd
@@ -496,10 +498,11 @@ action, so that only a qualified moose feeder can perform that action.
 The Authorization::Roles plugin let's us perform role based access
 control checks. Let's load it:
 
+    use parent qw/Catalyst/;
     use Catalyst qw/
-        Authentication # yadda yadda
-        Authorization::Roles
-    /;
+                    Authentication # yadda yadda
+                    Authorization::Roles
+                  /;
 
 And now our action should look like this:
 
@@ -1763,7 +1766,7 @@ The development server is a mini web server written in perl.  If you
 expect a low number of hits or you don't need mod_perl/FastCGI speed,
 you could use the development server as the application server with a
 lightweight proxy web server at the front.  However, consider using
-L<Catalyst::Engine::HTTP::POE> for this kind of deployment instead, since
+L<Catalyst::Engine::HTTP::Prefork> for this kind of deployment instead, since
 it can better handle multiple concurrent requests without forking, or can
 prefork a set number of servers for improved performance.
 
@@ -1808,8 +1811,17 @@ Make sure mod_proxy is enabled and add:
         Order deny,allow
         Allow from all
     </Proxy>
+
+    # Need to specifically stop these paths from being passed to proxy
+    ProxyPass /static !
+    ProxyPass /favicon.ico !
+
     ProxyPass / http://localhost:8080/
     ProxyPassReverse / http://localhost:8080/
+
+    # This is optional if you'd like to show a custom error page 
+    # if the proxy is not available
+    ErrorDocument 502 /static/error_pages/http502.html
 
 You can wrap the above within a VirtualHost container if you want
 different apps served on the same host.
@@ -2093,10 +2105,10 @@ There are three wrapper plugins around common CPAN cache modules:
 Cache::FastMmap, Cache::FileCache, and Cache::Memcached.  These can be
 used to cache the result of slow operations.
 
-This very page you're viewing makes use of the FileCache plugin to cache the
+The Catalyst Advent Calendar uses the FileCache plugin to cache the
 rendered XHTML version of the source POD document.  This is an ideal
-application for a cache because the source document changes infrequently but
-may be viewed many times.
+application for a cache because the source document changes
+infrequently but may be viewed many times.
 
     use Catalyst qw/Cache::FileCache/;
     
