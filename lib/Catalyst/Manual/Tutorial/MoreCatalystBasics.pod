@@ -110,7 +110,7 @@ C<-Debug> Flag
 
 Enables the Catalyst debug output you saw when we started the
 C<script/myapp_server.pl> development server earlier.  You can remove
-this plugin when you place your application into production.
+this item when you place your application into production.
 
 As you may have noticed, C<-Debug> is not a plugin, but a I<flag>.
 Although most of the items specified on the C<use Catalyst> line of your
@@ -146,7 +146,7 @@ to version 1.06, you need to be aware that Catalyst changed from a
 default format of YAML to the more straightforward C<Config::General>
 format.  Because Catalyst has long supported both formats, this
 tutorial will simply use a configuration file called C<myapp.conf>
-instead of C<myapp.yml> and Catatlyst will automcatically use the new
+instead of C<myapp.yml> and Catalyst will automatically use the new
 format.  Just be aware that earlier versions of Catalyst will still
 create the C<myapp.yml> file and that you will need to B<remove
 C<myapp.yml>> and create a new C<myapp.conf> file by hand, but
@@ -453,10 +453,8 @@ Then create C<root/src/books/list.tt2> in your editor and enter:
 
 As indicated by the inline comments above, the C<META title> line uses
 TT's META feature to provide a title to C<root/lib/site/header>.
-Meanwhile, the outer C<FOREACH> loop iterates through each C<book> model
-object and prints the C<title> and C<rating> fields.  An inner
-C<FOREACH> loop prints the last name of each author in a comma-separated
-list within a single table cell.
+Meanwhile, the C<FOREACH> loop iterates through each C<book> model
+object and prints the C<title> and C<rating> fields.
 
 If you are new to TT, the C<[%> and C<%]> tags are used to delimit TT
 code.  TT supports a wide variety of directives for "calling" other
@@ -464,10 +462,10 @@ files, looping, conditional logic, etc.  In general, TT simplifies the
 usual range of Perl operators down to the single dot (C<.>) operator.
 This applies to operations as diverse as method calls, hash lookups, and
 list index values (see
-L<http://www.template-toolkit.org/docs/default/Manual/Variables.html>
+L<http://search.cpan.org/perldoc?Template::Manual::Variables>
 for details and examples).  In addition to the usual C<Template> module
 Pod documentation, you can access the TT manual at
-L<http://www.template-toolkit.org/docs/default/>.
+L<http://search.cpan.org/perldoc?Template::Manual>.
 
 B<NOTE:> The C<TTSite> helper creates several TT files using an
 extension of C<.tt2>. Most other Catalyst and TT examples use an
@@ -928,7 +926,7 @@ C<td> cells):
     <td>
       [% # First initialize a TT variable to hold a list.  Then use a TT FOREACH -%]
       [% # loop in 'side effect notation' to load just the last names of the     -%]
-      [% # authors into the list.  Note that the 'push' TT vmethod does not      -%]
+      [% # authors into the list. Note that the 'push' TT vmethod does not print -%]
       [% # a value, so nothing will be printed here.  But, if you have something -%]
       [% # in TT that does return a method and you don't want it printed, you    -%]
       [% # can: 1) assign it to a bogus value, or 2) use the CALL keyword to     -%]

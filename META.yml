@@ -1,13 +1,20 @@
-abstract: The Catalyst developer's manual
-author: Kieren Diment <zarquon@cpan.org>
+---
+abstract: 'The Catalyst developer''s manual'
+author:
+  - 'Kieren Diment <zarquon@cpan.org>'
 distribution_type: module
-generated_by: Module::Install version 0.64
+generated_by: 'Module::Install version 0.77'
 license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
 name: Catalyst-Manual
-no_index: 
-  directory: 
+no_index:
+  directory:
     - inc
     - t
-requires: 
+requires:
   Test::More: 0
-version: 5.7013
+resources:
+  license: http://dev.perl.org/licenses/
+version: 5.7014
