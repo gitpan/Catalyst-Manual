@@ -65,7 +65,13 @@ pieces of your application over time.
 
 You can checkout the source code for this example from the catalyst
 subversion repository as per the instructions in
-L<Catalyst::Manual::Tutorial::Intro>
+L<Catalyst::Manual::Tutorial::Intro|Catalyst::Manual::Tutorial::Intro>.
+
+B<Note:> Some of the tests in this section currently fail under 
+Ubuntu 8.10 and Catalyst v5.7014.  We are looking for a fix.  They
+do work under Ubuntu 8.04 and Catalyst v5.7011.
+
+
 
 =head1 RUNNING THE "CANNED" CATALYST TESTS
 
@@ -314,7 +320,7 @@ lies.  A simple technique that can be used in such situations is to
 temporarily insert a line similar to the following right after the 
 failed test:
 
-    warn $ua1->content;
+    diag $ua1->content;
 
 This will cause the full HTML returned by the request to be displayed.
 
@@ -356,8 +362,8 @@ Kennedy Clark, C<hkclark@gmail.com>
 
 Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
-L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/Catalyst-Manual/lib/Catalyst/Manual/Tutorial/>.
+L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.70/trunk/lib/Catalyst/Manual/Tutorial/>.
 
 Copyright 2006-2008, Kennedy Clark, under Creative Commons License
-(L<http://creativecommons.org/licenses/by-nc-sa/2.5/>).
+(L<http://creativecommons.org/licenses/by-sa/3.0/us/>).
 

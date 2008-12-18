@@ -56,7 +56,7 @@ L<Appendices|Catalyst::Manual::Tutorial::Appendices>
 
 =head1 DESCRIPTION
 
-This tutorial provides a multipart introduction to the Catalyst web
+This tutorial provides a multi-part introduction to the Catalyst web
 framework. It seeks to provide a rapid overview of many of its most
 commonly used features. The focus is on the real-world best practices
 required in the construction of nearly all Catalyst applications.
@@ -82,12 +82,19 @@ ensure that your system is set up correctly, and that you have not
 inadvertently made any typographic errors, or accidentally skipped
 part of the tutorial.>
 
-B<NOTE: You can use any perl-supported OS and environment to run 
+B<NOTE: You can use any Perl-supported OS and environment to run 
 Catalyst.> It should make little or no difference to Catalyst's 
-operation, but this tutorial has been written using Ubuntu 8.04 
+operation, B<but this tutorial has been written using Ubuntu 8.10> 
 because that represents a quick and easy for most people to try out 
-Catalyst with virtually zero setup time and hassles.  See the Catalyst 
-installation section below for more information.
+Catalyst with virtually zero setup time and hassles.  Also, the tutorial 
+has been tested to work correctly with the versions of Catalyst and all 
+the supporting modules in Ubuntu 8.10 (see "VERSIONS AND CONVENTIONS 
+USED IN THIS TUTORIAL" below for the specific versions for some of the 
+key modules), so B<if you think you might be running into an issue 
+related to versions> (for example, a module changed its behavior in a 
+newer version or a bug was introduced), B<it might be worth giving 
+Ubuntu 8.10 a try>.  See the "CATALYST INSTALLATION" section below for 
+more information.
 
 If you're reading this manual online, you can download the example 
 program and all the necessary dependencies to your local machine by 
@@ -135,9 +142,7 @@ vs. C<lib/MyApp.pm>, etc.
 
 =item * 
 
-The use of Template Toolkit (TT) and the
-L<Catalyst::Helper::View::TTSite|Catalyst::Helper::View::TTSite> 
-view helper.
+The use of Template Toolkit (TT).
 
 =item * 
 
@@ -178,6 +183,7 @@ through the Catalyst web site and at
 L<http://dev.catalyst.perl.org/wiki/UserIntroductions> and
 L<http://dev.catalyst.perl.org/>.
 
+
 =head1 VERSIONS AND CONVENTIONS USED IN THIS TUTORIAL
 
 This tutorial was built using the following resources. Please note that
@@ -188,19 +194,19 @@ versions:
 
 =item * 
 
-Ubuntu 8.04 Hardy Heron
+Ubuntu 8.10 (Intrepid Ibex)
 
 =item * 
 
-Catalyst v5.7011
+Catalyst v5.7014
 
 =item *
 
-Catalyst::Devel v1.03
+Catalyst::Devel v1.07
 
 =item * 
 
-DBIx::Class v0.08008
+DBIx::Class v0.08010
 
 =item * 
 
@@ -215,11 +221,7 @@ use. This tutorial has been tested against the following set of plugins:
 
 =item * 
 
-Catalyst::Plugin::Authentication -- v0.10002
-
-=item *
-
-Catalyst::Plugin::Authentication::Store::DBIC -- v0.09
+Catalyst::Plugin::Authentication -- v0.10006
 
 =item *
 
@@ -231,23 +233,23 @@ Catalyst::Plugin::Authorization::Roles -- v0.05
 
 =item *
 
-Catalyst::Plugin::ConfigLoader -- v0.17
+Catalyst::Plugin::ConfigLoader -- v0.20
 
 =item *
 
-Catalyst::Plugin::Session -- v0.18
+Catalyst::Plugin::Session -- v0.19
 
 =item *
 
-Catalyst::Plugin::Session::State::Cookie -- v0.08
+Catalyst::Plugin::Session::State::Cookie -- v0.09
 
 =item *
 
-Catalyst::Plugin::Session::Store::FastMmap -- v0.03
+Catalyst::Plugin::Session::Store::FastMmap -- v0.05
 
 =item *
 
-Catalyst::Plugin::StackTrace -- v0.06
+Catalyst::Plugin::StackTrace -- v0.08
 
 =item *
 
@@ -256,6 +258,14 @@ Catalyst::Plugin::Static::Simple -- v0.20
 =back
 
 =item * 
+
+B<NOTE:> You can check the versions you have installed with the
+following command:
+
+    perl -ME<lt>mod_nameE<gt> -e '"print $E<lt>mod_nameE<gt>::VERSION\n"'
+
+For example:
+    perl -MCatalyst::Plugin::StackTrace -e 'print "$Catalyst::Plugin::StackTrace::VERSION\n"'
 
 Since the web browser is being used on the same box where Perl and the
 Catalyst development server is running, the URL of
@@ -267,13 +277,16 @@ will need to update the URL you use accordingly.
 
 =item * 
 
-Depending on the web browser you are using, you might need to hit
-C<Shift+Reload> to pull a fresh page when testing your application at
-various points.  Also, the C<-k> keepalive option to the development
-server can be necessary with some browsers (especially Internet
-Explorer).
+Depending on the web browser you are using, you might need to hit 
+C<Shift+Reload> or C<Ctrl+Reload> to pull a fresh page when testing 
+your application at various points (see 
+L<http://en.wikipedia.org/wiki/Bypass_your_cache> for a comprehensive
+list of options for each browser).  Also, the C<-k> keepalive option 
+to the development server can be necessary with some browsers 
+(especially Internet Explorer).
 
 =back
+
 
 =head1 CATALYST INSTALLATION
 
@@ -292,17 +305,19 @@ applicable to the largest number of potential new users:
 
 Ubuntu
 
-Given the popularity of Ubuntu and its ease of use, Ubuntu can be 
-a great way for newcomers to experiment with Catalyst.  Because it 
-is a "live CD," you can simply boot from the CD, run a few commands,
-and you should have a fully functional environment in which to do 
-this tutorial in a matter of minutes.  
+Given the popularity of Ubuntu and its ease of use, Ubuntu can be a 
+great way for newcomers to experiment with Catalyst.  Because it is a 
+"live CD," you can simply boot from the CD, run a few commands, and you 
+should have a fully functional environment in which to do this tutorial 
+in a matter of minutes.  B<The tutorial was fully tested to work under 
+Ubuntu 8.10.  Although it SHOULD work under any Catalyst installation 
+method you might choose, it can be hard to guarantee this.>
 
 =over 4
 
 =item * 
 
-Download Ubuntu 8.04 (aka, Hardy Heron) Desktop edition and boot from 
+Download Ubuntu 8.10 (aka, Intrepid Ibex) Desktop edition and boot from 
 the CD and/or image file, select your language, and then "Try Ubuntu 
 without any changes to your computer."
 
@@ -343,21 +358,48 @@ options to install Ubuntu on your drive.
 
 Matt Trout's C<cat-install>
 
-Available at L<http://www.shadowcatsystems.co.uk/static/cat-install>,
-C<cat-install> can be a quick and painless way to get Catalyst up and
-running.  Just download the script from the link above and type C<perl
-cat-install>.
+Available at L<http://www.shadowcatsystems.co.uk/static/cat-install>, 
+C<cat-install> can be a fairly painless way to get Catalyst up and 
+running.  Just download the script from the link above and type C<perl 
+cat-install>.  Depending on the speed of your Internet connection and 
+your computer, it will probably take 30 to 60 minutes to install because 
+it downloads, makes, compiles, and tests every module.  But this is an 
+excellent way to automate the installation of all the latest modules 
+used by Catalyst from CPAN.
+
 
 =item * 
 
-Chris Laco's CatInABox
+Other Possibilities
 
-Download the tarball from
-L<http://handelframework.com/downloads/CatInABox.tar.gz> and unpack it
-on your machine.  Depending on your OS platform, either run C<start.bat>
-or C<start.sh>.
+=over 4
+
+=item *
+
+OpenBSD Packages
+
+The 2008 Advent Day 4 entry has more information on using OpenBSD 
+packages to quickly build a system: 
+L<http://www.catalystframework.org/calendar/2008/4>.
+
+=item *
+
+NetBSD Package Collection on Solaris
+
+The 2008 Advent Day 15 entry has more information on using C<pkgsrc> and 
+NetBSD packages on Solaris: 
+L<http://www.catalystframework.org/calendar/2008/15|>.
 
 =item * 
+
+CatInABox
+
+You can get more information at 
+L<http://www.catalystframework.org/calendar/2008/7>
+or L<Perl::Dist::CatInABox|Perl::Dist::CatInABox>.
+
+
+=item *
 
 Pre-Built VMWare Images
 
@@ -378,6 +420,8 @@ for more details.
 
 =back
 
+=back
+
 For additional information and recommendations on Catalyst installation,
 please refer to 
 L<Catalyst::Manual::Installation|Catalyst::Manual::Installation>.
@@ -388,6 +432,7 @@ L<Catalyst::Manual::Installation::CentOS4|Catalyst::Manual::Installation::CentOS
 Using these instructions, you should be able to build a complete CentOS
 4.X server with Catalyst and all the plugins required to run this
 tutorial.
+
 
 =head1 DATABASES
 
@@ -401,18 +446,23 @@ notice that only the C<.sql> files used to initialize the database
 change between database systems: the Catalyst code generally remains the
 same.
 
+
 =head1 WHERE TO GET WORKING CODE
 
 Each part of the tutorial has complete code available in the main
 Catalyst Subversion repository (see the note at the beginning of each
 part for the appropriate svn command to use).  Additionally, the final
-code is available as a ready-to-run tarball at
-L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarball/MyApp.tgz>.
+code through Part 8 of the tutorial is available as a ready-to-run 
+tarball at
+L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarball/MyApp_Part8.tgz>.
+The final code for other parts of the tutorial are available at:
+L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarballs_Per_Part/>.
+
 
 B<NOTE:> You can run the test cases for the final code with the following 
 commands:
 
-    wget http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarball/MyApp.tgz
+    wget http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarball/MyApp_Part8.tgz
     tar zxvf MyApp.tgz
     cd MyApp
     CATALYST_DEBUG=0 prove --lib lib  t
@@ -424,9 +474,7 @@ Kennedy Clark, C<hkclark@gmail.com>
 
 Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
-L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/Catalyst-Manual/lib/Catalyst/Manual/Tutorial/>.
+L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.70/trunk/lib/Catalyst/Manual/Tutorial/>.
 
 Copyright 2006-2008, Kennedy Clark, under Creative Commons License
-(L<http://creativecommons.org/licenses/by-nc-sa/2.5/>).
-
-
+(L<http://creativecommons.org/licenses/by-sa/3.0/us/>).
