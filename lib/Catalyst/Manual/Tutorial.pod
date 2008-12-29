@@ -58,8 +58,8 @@ L<Appendices|Catalyst::Manual::Tutorial::Appendices>
 
 =back
 
-A tarball of the final application is available at
-L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarball/MyApp.tgz>.
+Final code tarballs for each part of the tutorial are available at 
+L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/>.
 
 
 =head1 Detailed Table of Contents
@@ -590,7 +590,7 @@ tutorial).
 
 =item *
 
-Kieren Diment for currently maintaining this document on CPAN.
+Kieren Diment for his oversite of Catalyst-related documentation.
 
 =item *
 
@@ -605,11 +605,12 @@ PostgreSQL content in the Appendix.
 
 People who have emailed me with corrections and suggestions on the 
 tutorial.  As of the most recent release, this include: Florian Ragwitz, 
-Mauro Andreolini, Jim Howard, Giovanni Gigante, William Moreno,  
-Bryan Roach, Ashley Berlin, David Kamholz, Kevin Old, Henning Sprang,
-Jeremy Jones, David Kurtz, Ingo Wichmann, and Shlomi Fish.  I'm sure I
-am missing some names here... apologies for that (please let me know
-if you name should be here).
+Mauro Andreolini, Jim Howard, Giovanni Gigante, William Moreno,  Bryan 
+Roach, Ashley Berlin, David Kamholz, Kevin Old, Henning Sprang, Jeremy 
+Jones, David Kurtz, Ingo Wichmann, and Shlomi Fish.  Also, thanks to 
+Devin Austin for coming up with an initial version of a non-TTSite 
+wrapper page.  I'm sure I am missing some names here... apologies for 
+that (please let me know if you name should be here).
 
 =back
 
@@ -619,7 +620,7 @@ Kennedy Clark, C<hkclark@gmail.com>
 
 Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
-L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/Catalyst-Manual/lib/Catalyst/Manual/Tutorial/>.
+L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.70/trunk/lib/Catalyst/Manual/Tutorial/>.
 
 Copyright 2006-2008, Kennedy Clark, under Creative Commons License
 (L<http://creativecommons.org/licenses/by-nc-sa/2.5/>).

@@ -70,11 +70,10 @@ management).
 You can obtain the code for all the tutorial examples from the
 catalyst subversion repository by issuing the command:
 
-    svn co http://dev.catalyst.perl.org/repos/Catalyst/tags/examples/Tutorial/MyApp/5.7/ CatalystTutorial
+    svn co http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/ CatalystTutorial
 
-This will download the current code for each tutorial chapter in the
-CatalystTutorial directory.  Each example application directory has
-the same name as the tutorial chapter.
+This will download the most recent tarball for each part of the 
+tutorial into the CatalystTutorial directory on your machine. 
 
 B<These reference implementations are provided so that when you follow
 the tutorial, you can use the code from the subversion repository to
@@ -177,11 +176,6 @@ to more complex environments.  More complete and complicated example
 applications can be found in the C<examples> area of the Catalyst
 Subversion repository at
 L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/>.
-
-B<Note:> There are a variety of other introductory materials available
-through the Catalyst web site and at
-L<http://dev.catalyst.perl.org/wiki/UserIntroductions> and
-L<http://dev.catalyst.perl.org/>.
 
 
 =head1 VERSIONS AND CONVENTIONS USED IN THIS TUTORIAL
@@ -342,15 +336,16 @@ Install Catalyst:
     sudo apt-get update
     sudo apt-get install libdbd-sqlite3-perl libcatalyst-perl libcatalyst-modules-perl libconfig-general-perl
 
-Accept all of the dependencies.  Done.
+Accept all of the dependencies.  Done.  
 
-NOTE: If you are low on disk space after the above commands (use C<df /> 
-to tell), you can free up some space with 
-C<sudo rm /var/cache/apt/archives/*.deb> (the Live CD uses memory for 
-disk space, so having a decent amount of memory will help).  And, 
-while the instructions above mention the Live CD because that makes it 
-easy for people new to Linux, you can obviously also use one of the 
-options to install Ubuntu on your drive.
+If you are running from the Live CD, you probably also want to free up 
+some disk space with the following:
+
+    sudo apt-get clean
+
+NOTE: While the instructions above mention the Live CD because that 
+makes it easy for people new to Linux, you can obviously also use one 
+of the options to install Ubuntu on your drive.
 
 =back
 
@@ -449,20 +444,14 @@ same.
 
 =head1 WHERE TO GET WORKING CODE
 
-Each part of the tutorial has complete code available in the main
-Catalyst Subversion repository (see the note at the beginning of each
-part for the appropriate svn command to use).  Additionally, the final
-code through Part 8 of the tutorial is available as a ready-to-run 
-tarball at
-L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarball/MyApp_Part8.tgz>.
-The final code for other parts of the tutorial are available at:
-L<http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarballs_Per_Part/>.
+Each part of the tutorial has complete code available as a tarball in 
+the main Catalyst Subversion repository (see the note at the beginning 
+of each part for the appropriate svn command to use).
 
+B<NOTE:> You can run the test cases for the final code through Part 8 
+with the following commands:
 
-B<NOTE:> You can run the test cases for the final code with the following 
-commands:
-
-    wget http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/Final_Tarball/MyApp_Part8.tgz
+    wget http://dev.catalyst.perl.org/repos/Catalyst/trunk/examples/Tutorial/MyApp_Part8.tgz
     tar zxvf MyApp.tgz
     cd MyApp
     CATALYST_DEBUG=0 prove --lib lib  t
