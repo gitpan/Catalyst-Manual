@@ -89,7 +89,7 @@ Edit C<lib/MyApp.pm> and add C<Authorization::Roles> to the list:
             Session
             Session::Store::FastMmap
             Session::State::Cookie
-        /;
+        /);
 
 B<Note:> As discussed in MoreCatalystBasics, different versions of 
 C<Catalyst::Devel> have used a variety of methods to load the plugins. 
@@ -162,13 +162,13 @@ lines to the bottom of the file:
     [% # Use $c->check_user_roles() to check authz -%]
     [% IF c.check_user_roles('user') %]
       [% # Give normal users a link for 'logout' %]
-      <a href="[% c.uri_for('/logout') %]">Logout</a>
+      <a href="[% c.uri_for('/logout') %]">User Logout</a>
     [% END %]
     
     [% # Can also use $c->user->check_roles() to check authz -%]
     [% IF c.check_user_roles('admin') %]
       [% # Give admin users a link for 'create' %]
-      <a href="[% c.uri_for('form_create') %]">Create</a>
+      <a href="[% c.uri_for(c.controller.action_for('form_create')) %]">Admin Create</a>
     [% END %]
     </p>
 
@@ -195,7 +195,7 @@ updating C<url_create> to match the following code:
     
     =cut
     
-    sub url_create : Local {
+    sub url_create :Chained('base') :PathPart('url_create') :Args(3) {
         # In addition to self & context, get the title, rating & author_id args
         # from the URL.  Note that Catalyst automatically puts extra information
         # after the "/<controller_name>/<action_name/" into @_
@@ -230,7 +230,7 @@ updating C<url_create> to match the following code:
             # Set the TT template to use
             $c->stash->{template} = 'books/create_done.tt2';
         } else {
-            # Provide very simple feedback to the user
+            # Provide very simple feedback to the user.
             $c->response->body('Unauthorized!');
         }
     }
@@ -244,12 +244,12 @@ way to demonstrate that TT templates will not be used if the response
 body has already been set.  In reality you would probably want to use a
 technique that maintains the visual continuity of your template layout
 (for example, using the "status" or "error" message feature added in
-Part 3).
+Part 3 or C<detach> to an action that shows an "unauthorized" page).
 
 B<TIP>: If you want to keep your existing C<url_create> method, you can
 create a new copy and comment out the original by making it look like a
-Pod comment.  For example, put something like C<=begin> before C<sub add
-: Local {> and C<=end> after the closing C<}>.
+Pod comment.  For example, put something like C<=begin> before 
+C<sub add : Local {> and C<=end> after the closing C<}>.
 
 
 =head2 Try Out Authentication And Authorization
@@ -261,10 +261,10 @@ running) and restart it:
 
 Now trying going to L<http://localhost:3000/books/list> and you should 
 be taken to the login page (you might have to C<Shift+Reload> or 
-C<Ctrl+Reload> your browser and/or click the "Logout" link on the book 
+C<Ctrl+Reload> your browser and/or click the "User Logout" link on the book 
 list page).  Try logging in with both C<test01> and C<test02> (both 
 use a password of C<mypass>) and notice how the roles information 
-updates at the bottom of the "Book List" page. Also try the C<Logout> 
+updates at the bottom of the "Book List" page. Also try the "User Logout"
 link on the book list page.
 
 Now the "url_create" URL will work if you are already logged in as user
@@ -273,7 +273,7 @@ C<test02>.  Try:
 
     http://localhost:3000/books/url_create/test/1/6
 
-while logged in as each user.  Use one of the 'Logout' links (or go to 
+while logged in as each user.  Use one of the "logout" links (or go to 
 L<http://localhost:3000/logout> in your browser directly) when you are 
 done.
 
@@ -311,7 +311,7 @@ C<__PACKAGE__-E<gt>setup> statement:
             "/books/form_create_do",
             [qw/admin/],
         );
-    __PACKAGE__->deny_access_unless(
+    __PACKAGE__->allow_access_if(
             "/books/delete",
             [qw/user admin/],
         );
@@ -320,9 +320,10 @@ Each of the three statements above comprises an ACL plugin "rule".  The
 first two rules only allow admin-level users to create new books using
 the form (both the form itself and the data submission logic are
 protected).  The third statement allows both users and admins to delete
-books.  The C</books/url_create> action will continue to be protected by
-the "manually configured" authorization created earlier in this part of
-the tutorial.
+books; letting users delete but not create book entries may sound odd in
+the "real world", but this is just an example.  The C</books/url_create>
+action will continue to be protected by the "manually configured"
+authorization created earlier in this part of the tutorial.
 
 The ACL plugin permits you to apply allow/deny logic in a variety of
 ways.  The following provides a basic overview of the capabilities:
@@ -407,12 +408,12 @@ Then run the Catalyst development server script:
 Log in as C<test02>.  Once at the book list, click the "Create" link
 to try the C<form_create> action.  You should receive a red
 "Unauthorized!"  error message at the top of the list.  (Note that in
-the example code the "Create" link code in C<root/src/books/list.tt2>
+the example code the "Admin Create" link code in C<root/src/books/list.tt2>
 is inside an C<IF> statement that only displays the list to
 admin-level users.)  If you log in as C<test01> you should be able to
 view the C<form_create> form and add a new book.
 
-When you are done, use one of the 'Logout' links (or go to the
+Use one of the 'Logout' links (or go to the
 L<http://localhost:3000/logout> URL directly) when you are done.
 
 

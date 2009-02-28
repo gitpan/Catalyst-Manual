@@ -151,7 +151,7 @@ C<myapp.yml> (or any other format supported by
 L<Catalyst::Plugin::ConfigLoader|Catalyst::Plugin::ConfigLoader> and
 L<Config::Any|Config::Any>).  If you are using a versions of
 Catalyst::Devel prior to 1.06, you can convert to the newer format by
-simply creating the C<myapp.yml> file manually and deleting
+simply creating the C<myapp.conf> file manually and deleting
 C<myapp.yml>.  The default contents of C<myapp.conf> should only
 consist of one line: C<name MyApp>.
 
@@ -294,26 +294,89 @@ Context object is automatically passed to all Catalyst components.  It
 is used to pass information between components and provide access to 
 Catalyst and plugin functionality.
 
-B<Note:> Catalyst actions are regular Perl methods, but they make use 
-of Nicholas Clark's C<attributes> module (that's the "C<: Local>" next 
-to the C<sub list> in the code above) to provide additional 
-information to the Catalyst dispatcher logic.  Many newer Catalyst 
-applications are switching to the use of "Literal" C<:Path> actions 
-and C<Args> attribute in lieu of C<: Local> and C<: Private>.  For 
-example, C<sub any_method :Path :Args(0)> can be used instead of C<sub 
-index :Private> (because no path was supplied to C<Path> it matches 
-the "empty" URL in the namespace of that module... the same thing 
-C<sub index> would do) or C<sub list :Path('list') :Args(0)> could be 
-used instead of the C<sub list : Local> above (the C<list> argument to 
-C<Path> would make it match on the URL C<list> under C<books>, the 
-namespace of the current module).  See "Action Types" in 
-L<Catalyst::Manual::Intro|Catalyst::Manual::Intro> as well as Part 5 
-of this tutorial (Authentication) for additional information.  Another 
-popular but more advanced feature is C<Chained> actions that allow a 
-single URL to "chain together" multiple action method calls, each with 
-an appropriate number of arguments (see 
-L<Catalyst::DispatchType::Chained|Catalyst::DispatchType::Chained> for 
-details).
+Catalyst actions are regular Perl methods, but they make use of 
+attributes (the "C<: Local>" next to the "C<sub list>" in the code 
+above) to provide additional information to the Catalyst dispatcher 
+logic (note that the space between the colon and the attribute name is 
+optional... you will see attributes written both ways).  Most Catalyst 
+Controllers use one of five action types:
+
+=over 4
+
+=item *
+
+B<:Private> -- Use C<:Private> for methods that you want to make into 
+an action, but you do not want Catalyst to directly expose the action 
+to your users.  Catalyst will not map C<:Private> methods to a URI. 
+Use them for various sorts of "special" methods (the C<begin>, 
+C<auto>, etc. discussed below) or for methods you want to be able to 
+C<forward> or C<detach> to.  (If the method is a plain old "helper 
+method" that you don't want to be an action at all, then just define 
+the method without any attribute -- you can call it in your code, but 
+the Catalyst dispatcher will ignore it.)
+
+=over 4
+
+There are five types of "special" build-in C<:Private> actions: 
+C<begin>, C<end>, C<default>, C<index>, and C<auto>.
+
+=item *
+
+With C<begin>, C<end>, C<default>, C<index> private actions, only the
+most specific action of each type will be called.  For example, if you
+define a C<begin> action in your controller it will I<override> a
+C<begin> action in your application/root controller -- I<only> the
+action in your controller will be called.
+
+=item *
+
+Unlike the other actions where only a single method is called for each
+request, I<every> auto action along the chain of namespaces will be
+called.  Each C<auto> action will be called I<from the application/root
+controller down through the most specific class>.
+
+=back
+
+=item *
+
+B<:Path> -- C<:Path> actions let you map a method to an explicit URI 
+path.  For example, "C<:Path('list')>" in 
+C<lib/MyApp/Controller/Books.pm> would match on the URL 
+C<http://localhost:3000/books/list> but "C<:Path('/list')>" would match 
+on C<http://localhost:3000/list>.  You can use C<:Args()> to specify 
+how many arguments an action should except.  See 
+L<Catalyst::Manual::Intro/Action_types> for more information and a few 
+examples.
+
+=item *
+
+B<:Local> -- C<:Local> is merely a shorthand for 
+"C<:Path('_name_of_method_')>".  For example, these are equivalent:
+"C<sub create_book :Local {...}>" and 
+"C<sub create_book :Path('create_book') {...}>".
+
+=item *
+
+B<:Global> -- C<:Global> is merely a shorthand for 
+"C<:Path('/_name_of_method_')>".  For example, these are equivalent:
+"C<sub create_book :Global {...}>" and 
+"C<sub create_book :Path('/create_book') {...}>".
+
+=item *
+
+B<:Chained> -- Newer Catalyst applications tend to use the Chained 
+dispatch form of action types because of its power and flexibility.  
+It allows a series of controller methods to automatically be dispatched
+to service a single user request.  See 
+L<Catalyst::Manual::Tutorial::BasicCRUD|Catalyst::Manual::Tutorial::BasicCRUD> 
+and L<Catalyst::DispatchType::Chained|Catalyst::DispatchType::Chained> 
+for more information on chained actions.
+
+=back
+
+You should refer to L<Catalyst::Manual::Intro/Action_types> for 
+additional information and for coverage of some lesser-used action 
+types not discussed here (C<Regex> and C<LocalRegex>).
 
 
 =head1 CATALYST VIEWS
@@ -348,18 +411,20 @@ L<Catalyst::Helper::View::TTSite|Catalyst::Helper::View::TTSite>
 
 =back
 
-Both are similar, but C<TT> merely creates the C<lib/MyApp/View/TT.pm>
+Both helpers are similar. C<TT> creates the C<lib/MyApp/View/TT.pm>
 file and leaves the creation of any hierarchical template organization
 entirely up to you. (It also creates a C<t/view_TT.t> file for testing;
-test cases will be discussed in Part 8.) On the other hand, the
-C<TTSite> helper creates a modular and hierarchical view layout with
+test cases will be discussed in Part 8.) C<TTSite>, on the other hand, 
+creates a modular and hierarchical view layout with
 separate Template Toolkit (TT) files for common header and footer
 information, configuration values, a CSS stylesheet, and more.
 
-While TTSite is useful to bootstrap a project, most in the Catalyst 
-community recommend that it's easier to learn both Catalyst and 
-Template Toolkit if you use the more basic TT approach.  Consequently, 
-this tutorial will use "plain old TT."
+While C<TTSite> was useful to bootstrap a project, its use is now
+deprecated and to be considered historical.  For most Catalyst
+applications it adds redundant functionality and structure; many in the
+Catalyst community recommend that it's easier to learn both Catalyst and
+Template Toolkit if you use the more basic C<TT> approach.
+Consequently, this tutorial will use "plain old TT."
 
 Enter the following command to enable the C<TT> style of view
 rendering for this tutorial:
@@ -391,7 +456,7 @@ And update it to match:
         TEMPLATE_EXTENSION => '.tt2',
         # Set the location for TT files
         INCLUDE_PATH => [
-                MyApp->path_to( 'root/src' ),
+                MyApp->path_to( 'root', 'src' ),
             ],
     );
 
@@ -400,7 +465,9 @@ quote.
 
 This changes the default extension for Template Toolkit from '.tt' to
 '.tt2' and changes the base directory for your template files from
-C<root> to C<root/src>.
+C<root> to C<root/src>.  These changes from the default are done mostly
+to facilitate the application we're developing in this tutorial; as with
+most things Perl, there's more than one way to do it...
 
 
 =head2 Create a TT Template Page
@@ -565,6 +632,8 @@ required if you do a single SQL statement on the command line).  Use
 ".q" to exit from SQLite from the SQLite interactive mode and return to
 your OS command prompt.
 
+For using other databases, such as PostgreSQL or MySQL, see 
+L<Appendix 2|Catalyst::Manual::Tutorial::Appendices>.
 
 =head1 DATABASE ACCESS WITH C<DBIx::Class>
 
@@ -602,8 +671,12 @@ to C<lib/MyApp/Schema.pm>.  Because we specified C<create=dynamic> to
 the helper, it use 
 L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> to 
 dynamically load the schema information from the database every time 
-the application starts. And finally, C<dbi:SQLite:myapp.db> is the 
-standard DBI connect string for use with SQLite.
+the application starts. DBIC uses the schema to load other classes 
+that represent the tables in your database (DBIC refers to these 
+"table objects" as "result sources," see 
+L<DBIx::Class::ResultSource|DBIx::Class::ResultSource>). And finally, 
+C<dbi:SQLite:myapp.db> is the standard DBI connect string for use with 
+SQLite.
 
 B<NOTE:> Although the C<create=dynamic> option to the DBIC helper
 makes for a nifty demonstration, is only really suitable for very
@@ -639,9 +712,26 @@ C<[$c-E<gt>model('DB::Books')-E<gt>all]> and delete the next 2 lines):
         $c->stash->{template} = 'books/list.tt2';
     }
 
-B<TIP>: You may see the C<$c-E<gt>model('DB::Book')> un-commented above
-written as C<$c-E<gt>model('DB')-E<gt>resultset('Book')>.  The two
-are equivalent.
+B<TIP>: You may see the C<$c-E<gt>model('DB::Book')> un-commented 
+above written as C<$c-E<gt>model('DB')-E<gt>resultset('Book')>.  The 
+two are equivalent.  Either way, C<$c-E<gt>model> returns a 
+L<DBIx::Class::ResultSet|DBIx::Class::ResultSet> which handles queries 
+against the database and iterating over the set of results that are 
+returned.
+
+We are using the C<-E<gt>all> to fetch all of the books.  DBIC 
+supports a wide variety of more advanced operations to easily do 
+things like filtering and sorting the results.  For example, the 
+following could be used to sort the results by descending title:
+
+    $c->model('DB::Books')->search({}, {order_by => 'title DESC'});
+
+Some other examples are provided in 
+L<DBIx::Class::Manual::Cookbook/Complex WHERE clauses>, with 
+additional information found at L<DBIx::Class::ResultSet/search>, 
+L<DBIx::Class::Manual::FAQ/Searching>, 
+L<DBIx::Class::Manual::Intro|DBIx::Class::Manual::Intro> 
+and L<Catalyst::Model::DBIC::Schema|Catalyst::Model::DBIC::Schema>.
 
 
 =head2 Test Run The Application
@@ -784,7 +874,7 @@ Edit C<lib/MyApp/View/TT.pm> and change it to match the following:
         TEMPLATE_EXTENSION => '.tt2',
         # Set the location for TT files
         INCLUDE_PATH => [
-                MyApp->path_to( 'root/src' ),
+                MyApp->path_to( 'root', 'src' ),
             ],
         # Set to 1 for detailed timer stats in your HTML as comments
         TIMER              => 0,
@@ -836,7 +926,7 @@ For the tutorial, open C<root/src/wrapper.tt2> and input the following:
     </div><!-- end bodyblock -->
     
     <div id="footer">Copyright (c) your name goes here</div>
-    </div><!-- end outter -->
+    </div><!-- end outer -->
     
     </body>
     </html>
@@ -974,7 +1064,7 @@ L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> as its base
 class (L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> is 
 only being used by the helper to load the schema once and then create 
 the static files for us) and C<Schema.pm> only contains a call to the 
-C<load_classes> method.  You will also find that C<lib/MyApp/Schema> 
+C<load_classes> method.  You will also find that C<lib/MyApp> 
 contains a C<Schema> subdirectory, with one file inside this directory 
 for each of the tables in our simple database (C<Authors.pm>, 
 C<BookAuthors.pm>, and C<Books.pm>).  These three files were created 
@@ -1103,11 +1193,13 @@ Make sure that the application loads correctly and that you see the
 three dynamically created model class (one for each of the
 table-specific schema classes we created).
 
-Then hit the URL L<http://localhost:3000/books/list> and be sure that
-the book list is displayed.
+Then hit the URL L<http://localhost:3000/books/list> and be sure that 
+the book list is displayed via the relationships established above. You 
+can leave the development server running for the next step if you wish.
 
-You can leave the development server running for the next step if you
-wish.
+B<Note:> You will not see the authors yet because the view does not yet 
+use the new relations. Read on to the next section where we update the 
+template to do that.
 
 
 =head1 UPDATING THE VIEW
@@ -1149,15 +1241,23 @@ enabled, you should also now see five more C<SELECT> statements in the
 debug output (one for each book as the authors are being retrieved by
 DBIC).
 
-Also note that we are using "| html", a type of TT filter, to escape
-characters such as E<lt> and E<gt> to &lt; and &gt; and avoid various
-types of dangerous hacks against your application.  In a real
-application, you would probably want to put "| html" at the end of
-every field where a user has control over the information that can
-appear in that field (and can therefore inject markup or code if you
-don't "neutralize" those fields).  In addition to "| html", Template
-Toolkit has a variety of other useful filters that can found in the
-documentation for L<Template::Filters|Template::Filters>.
+    SELECT me.id, me.title, me.rating FROM books me:
+    SELECT me.book_id, me.author_id FROM book_authors me WHERE ( me.book_id = ? ): '1'
+    SELECT me.book_id, me.author_id FROM book_authors me WHERE ( me.book_id = ? ): '2'
+    SELECT me.book_id, me.author_id FROM book_authors me WHERE ( me.book_id = ? ): '3'
+    SELECT me.book_id, me.author_id FROM book_authors me WHERE ( me.book_id = ? ): '4'
+    SELECT me.book_id, me.author_id FROM book_authors me WHERE ( me.book_id = ? ): '5'
+
+Also note in C<root/src/books/list.tt2> that we are using "| html", a 
+type of TT filter, to escape characters such as E<lt> and E<gt> to &lt; 
+and &gt; and avoid various types of dangerous hacks against your 
+application.  In a real application, you would probably want to put 
+"| html" at the end of every field where a user has control over the 
+information that can appear in that field (and can therefore inject 
+markup or code if you don't "neutralize" those fields).  In addition to 
+"| html", Template Toolkit has a variety of other useful filters that 
+can found in the documentation for 
+L<Template::Filters|Template::Filters>.
 
 
 =head1 RUNNING THE APPLICATION FROM THE COMMAND LINE

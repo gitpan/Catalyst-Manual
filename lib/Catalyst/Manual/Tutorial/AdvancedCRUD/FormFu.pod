@@ -61,7 +61,7 @@ L<Appendices|Catalyst::Manual::Tutorial::Appendices>
 This portion of the tutorial explores L<HTML::FormFu|HTML::FormFu> and 
 how it can be used to manage forms, perform validation of form input, 
 as well as save and restore data to/from the database.  This was written
-using HTML::FormFu version 0.03006.
+using HTML::FormFu version 0.03007.
 
 See 
 L<Catalyst::Manual::Tutorial::AdvancedCRUD|Catalyst::Manual::Tutorial::AdvancedCRUD>
@@ -119,7 +119,7 @@ add additional functionality to the manually created form from Part 4.
 
 First, change your C<lib/MyApp/Controller/Books.pm> to inherit from
 L<Catalyst::Controller::HTML::FormFu|Catalyst::Controller::HTML::FormFu>
-by changing the C<use base> line from the default of:
+by changing the C<use parent> line from the default of:
 
     use parent 'Catalyst::Controller';
 
@@ -152,11 +152,11 @@ following method:
             # Create a new book
             my $book = $c->model('DB::Books')->new_result({});
             # Save the form data for the book
-            $form->save_to_model($book);
+            $form->model->update($book);
             # Set a status message for the user
             $c->flash->{status_msg} = 'Book created';
             # Return to the books list
-            $c->response->redirect($c->uri_for('list')); 
+            $c->response->redirect($c->uri_for($self->action_for('list'))); 
             $c->detach;
         } else {
             # Get the authors from the DB
@@ -260,7 +260,7 @@ Open C<root/src/books/formfu_create.tt2> in your editor and enter the following:
     [%# Render the HTML::FormFu Form %]
     [% form %]
     
-    <p><a href="[% c.uri_for('list') %]">Return to book list</a></p>
+    <p><a href="[% c.uri_for(c.controller.action_for('list')) %]">Return to book list</a></p>
 
 
 =head2 Add Links for Create and Update via C<HTML::FormFu>
@@ -270,7 +270,7 @@ the bottom of the existing file:
 
     <p>
       HTML::FormFu:
-      <a href="[% c.uri_for('formfu_create') %]">Create</a>
+      <a href="[% c.uri_for(c.controller.action_for('formfu_create')) %]">Create</a>
     </p>
 
 This adds a new link to the bottom of the book list page that we can
@@ -473,7 +473,7 @@ bottom:
         # Make sure we were able to get a book
         unless ($book) {
             $c->flash->{error_msg} = "Invalid book -- Cannot edit";
-            $c->response->redirect($c->uri_for('list'));
+            $c->response->redirect($c->uri_for($self->action_for('list')));
             $c->detach;
         }
     
@@ -485,11 +485,11 @@ bottom:
         # is shorthand for "$form->submitted && !$form->has_errors"
         if ($form->submitted_and_valid) {
             # Save the form data for the book
-            $form->save_to_model($book);
+            $form->model->update($book);
             # Set a status message for the user
             $c->flash->{status_msg} = 'Book edited';
             # Return to the books list
-            $c->response->redirect($c->uri_for('list'));
+            $c->response->redirect($c->uri_for($self->action_for('list')));
             $c->detach;
         } else {
             # Get the authors from the DB
@@ -504,7 +504,7 @@ bottom:
             # Add the authors to it
             $select->options(\@authors);
             # Populate the form with existing values from DB
-            $form->defaults_from_model($book);
+            $form->model->default_values($book);
         }
     
         # Set the template
@@ -533,14 +533,14 @@ we set the error message and return to the book list.
 =item *
 
 If the form has been submitted and passes validation, we skip creating a 
-new book and just use C<$form-E<gt>save_to_model> to update the existing 
+new book and just use C<$form-E<gt>model-E<gt>update> to update the existing 
 book.
 
 =item *
 
 If the form is being displayed for the first time (or has failed 
 validation and it being redisplayed), we use
- C<$form-E<gt>default_from_model> to populate the form with data from the 
+ C<$form-E<gt>model-E<gt>default_values> to populate the form with data from the
 database.
 
 =back
@@ -553,9 +553,9 @@ following:
     ...
     <td>
       [% # Add a link to delete a book %]
-      <a href="[% c.uri_for('delete', book.id) %]">Delete</a>
+      <a href="[% c.uri_for(c.controller.action_for('delete', [book.id])) %]">Delete</a>
       [% # Add a link to edit a book %]
-      <a href="[% c.uri_for('formfu_edit', book.id) %]">Edit</a>
+      <a href="[% c.uri_for(c.controller.action_for('formfu_edit', [book.id])) %]">Edit</a>
     </td>
     ...
 
@@ -579,6 +579,36 @@ Stevens as a co-author (control-click), and click Submit.  You will then
 be returned to the book list with a "Book edited" message at the top in 
 green.  Experiment with other edits to various books.
 
+=head2 More Things to Try
+
+You are now armed with enough knowledge to be dangerous.  You can keep
+tweaking the example application; some things you might want to do:
+
+=over 4
+
+=item *
+
+Add an appropriate ACL to the new Edit function.
+
+=item *
+
+Cleanup the List page so that the Login link only displays when the user
+isn't logged in and the Logout link only displays when a user is logged
+in.
+
+=item *
+
+Add a more sensible policy for when and how users and admins can do
+things in the CRUD cycle.
+
+=item *
+
+Support the CRUD cycle for authors.
+
+=back
+
+Or you can proceed to write your own application, which is probably the
+real reason you worked through this Tutorial in the first place.
 
 =head2  Config::General Config for this tutorial
 
