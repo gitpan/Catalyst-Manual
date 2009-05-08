@@ -64,9 +64,16 @@ will be too limited to be of use to anyone, it should provide a basic
 environment where we can explore a variety of features used in 
 virtually all web applications.
 
-You can checkout the source code for this example from the catalyst
-subversion repository as per the instructions in
+You can check out the source code for this example from the Catalyst
+Subversion repository as per the instructions in
 L<Catalyst::Manual::Tutorial::Intro|Catalyst::Manual::Tutorial::Intro>.
+
+Please take a look at 
+L<Catalyst::Manual::Tutorial::Intro/CATALYST INSTALLATION> before 
+doing the rest of this tutorial.  Although the tutorial should work 
+correctly under most any recent version of Perl running on any 
+operating system, the tutorial has been written using Debian 5 and 
+tested to be sure it runs correctly in this environment.  
 
 
 =head1 CREATE A NEW APPLICATION
@@ -166,8 +173,8 @@ formats:
 
 L<Catalyst::Plugin::Static::Simple|Catalyst::Plugin::Static::Simple>
 
-C<Static::Simple> provides an easy method of serving static content such
-as images and CSS files under the development server.
+C<Static::Simple> provides an easy way to serve static content, such
+as images and CSS files, from the development server.
 
 =back
 
@@ -236,7 +243,7 @@ them all on one (or more) lines as with the default configuration.
 
 As discussed earlier, controllers are where you write methods that
 interact with user input.  Typically, controller methods respond to
-C<GET> and C<POST> messages from the user's web browser.
+C<GET> and C<POST> requests from the user's web browser.
 
 Use the Catalyst C<create> script to add a controller for book-related
 actions:
@@ -291,7 +298,7 @@ Catalyst actions are regular Perl methods, but they make use of
 attributes (the "C<: Local>" next to the "C<sub list>" in the code 
 above) to provide additional information to the Catalyst dispatcher 
 logic (note that the space between the colon and the attribute name is 
-optional... you will see attributes written both ways).  Most Catalyst 
+optional; you will see attributes written both ways).  Most Catalyst 
 Controllers use one of five action types:
 
 =over 4
@@ -299,7 +306,7 @@ Controllers use one of five action types:
 =item *
 
 B<:Private> -- Use C<:Private> for methods that you want to make into 
-an action, but you do not want Catalyst to directly expose the action 
+an action, but you do not want Catalyst to directly expose  
 to your users.  Catalyst will not map C<:Private> methods to a URI. 
 Use them for various sorts of "special" methods (the C<begin>, 
 C<auto>, etc. discussed below) or for methods you want to be able to 
@@ -337,7 +344,7 @@ path.  For example, "C<:Path('list')>" in
 C<lib/MyApp/Controller/Books.pm> would match on the URL 
 C<http://localhost:3000/books/list> but "C<:Path('/list')>" would match 
 on C<http://localhost:3000/list>.  You can use C<:Args()> to specify 
-how many arguments an action should except.  See 
+how many arguments an action should accept.  See 
 L<Catalyst::Manual::Intro/Action_types> for more information and a few 
 examples.
 
@@ -359,7 +366,7 @@ B<:Global> -- C<:Global> is merely a shorthand for
 
 B<:Chained> -- Newer Catalyst applications tend to use the Chained 
 dispatch form of action types because of its power and flexibility.  
-It allows a series of controller methods to automatically be dispatched
+It allows a series of controller methods to be automatically dispatched
 to service a single user request.  See 
 L<Catalyst::Manual::Tutorial::BasicCRUD|Catalyst::Manual::Tutorial::BasicCRUD> 
 and L<Catalyst::DispatchType::Chained|Catalyst::DispatchType::Chained> 
@@ -374,17 +381,17 @@ types not discussed here (C<Regex> and C<LocalRegex>).
 
 =head1 CATALYST VIEWS
 
-As mentioned in Chapter 2 of the tutorial, views are where you render 
-output, typically for display in the user's web browser (but also 
-possibly using other display output-generation systems).  The code in 
-C<lib/MyApp/View> selects the I<type> of view to use, with the actual 
-rendering template found in the C<root> directory.  As with virtually 
-every aspect of Catalyst, options abound when it comes to the specific 
-view technology you adopt inside your application. However, most 
-Catalyst applications use the Template Toolkit, known as TT (for more 
-information on TT, see L<http://www.template-toolkit.org>). Other 
-somewhat popular view technologies include Mason 
-(L<http://www.masonhq.com> and L<http://www.masonbook.com>) and 
+As mentioned in Chapter 2 of the tutorial, views are where you render
+output, typically for display in the user's web browser (but also
+possibly using into output-generation systems, such as PDF or JSON).
+The code in C<lib/MyApp/View> selects the I<type> of view to use, with
+the actual rendering template found in the C<root> directory.  As with
+virtually every aspect of Catalyst, options abound when it comes to the
+specific view technology you adopt inside your application. However,
+most Catalyst applications use the Template Toolkit, known as TT (for
+more information on TT, see L<http://www.template-toolkit.org>). Other
+somewhat popular view technologies include Mason
+(L<http://www.masonhq.com> and L<http://www.masonbook.com>) and
 L<HTML::Template> (L<http://html-template.sourceforge.net>).
 
 
@@ -413,7 +420,7 @@ separate Template Toolkit (TT) files for common header and footer
 information, configuration values, a CSS stylesheet, and more.
 
 While C<TTSite> was useful to bootstrap a project, its use is now
-deprecated and to be considered historical.  For most Catalyst
+deprecated and it should be considered historical.  For most Catalyst
 applications it adds redundant functionality and structure; many in the
 Catalyst community recommend that it's easier to learn both Catalyst and
 Template Toolkit if you use the more basic C<TT> approach.
@@ -492,6 +499,7 @@ Then create C<root/src/books/list.tt2> in your editor and enter:
       <tr>
         <td>[% book.title %]</td>
         <td>[% book.rating %]</td>
+        <td></td>
       </tr>
     [% END -%]
     </table>
@@ -501,15 +509,15 @@ TT's META feature to provide a title to the "wrapper" that we will
 create later. Meanwhile, the C<FOREACH> loop iterates through each
 C<book> model object and prints the C<title> and C<rating> fields.
 
-If you are new to TT, the C<[%> and C<%]> tags are used to delimit TT
-code.  TT supports a wide variety of directives for "calling" other
-files, looping, conditional logic, etc.  In general, TT simplifies the
-usual range of Perl operators down to the single dot (C<.>) operator.
-This applies to operations as diverse as method calls, hash lookups, and
-list index values (see
-L<http://search.cpan.org/perldoc?Template::Manual::Variables>
-for details and examples).  In addition to the usual C<Template> module
-Pod documentation, you can access the TT manual at
+The C<[%> and C<%]> tags are used to delimit Template Toolkit code.  TT
+supports a wide variety of directives for "calling" other files,
+looping, conditional logic, etc.  In general, TT simplifies the usual
+range of Perl operators down to the single dot (C<.>) operator.  This
+applies to operations as diverse as method calls, hash lookups, and list
+index values (see
+L<http://search.cpan.org/perldoc?Template::Manual::Variables> for
+details and examples).  In addition to the usual C<Template> module Pod
+documentation, you can access the TT manual at
 L<http://search.cpan.org/perldoc?Template::Manual>.
 
 B<TIP:> While you can build all sorts of complex logic into your TT
@@ -635,35 +643,162 @@ For using other databases, such as PostgreSQL or MySQL, see
 L<Appendix 2|Catalyst::Manual::Tutorial::Appendices>.
 
 
-=head1 DATABASE ACCESS WITH C<DBIx::Class>
+=head1 DATABASE ACCESS WITH DBIx::Class
 
-Catalyst can be used with virtually any form of persistent datastore 
-available via Perl.  For example, 
-L<Catalyst::Model::DBI|Catalyst::Model::DBI> can be used to easily 
-access databases through the traditional Perl C<DBI> interface. However, 
-most Catalyst applications use some form of ORM technology to 
-automatically create and save model objects as they are used.  Although 
-L<Class::DBI|Class::DBI> has been a popular choice in the past, Matt 
-Trout's L<DBIx::Class|DBIx::Class> (abbreviated as "DBIC") has rapidly 
-emerged as the Perl-based ORM technology of choice. Most new Catalyst 
-applications rely on DBIC, as will this tutorial.
+Catalyst can be used with virtually any form of datastore available 
+via Perl.  For example, L<Catalyst::Model::DBI|Catalyst::Model::DBI> 
+can be used to access databases through the traditional Perl C<DBI> 
+interface or you can use a model to access files of any type on the 
+filesystem.  However, most Catalyst applications use some form of 
+object-relational mapping (ORM) technology to create objects 
+associated with tables in a relational database.  Matt Trout's 
+L<DBIx::Class|DBIx::Class> (abbreviated as "DBIC") has rapidly emerged 
+as the Perl-based ORM technology of choice. Most new Catalyst 
+applications rely on DBIx::Class, as will this tutorial.
+
+Although DBIx::Class has included support for a C<create=dynamic> mode 
+to automatically read the database structure every time the 
+application starts, it's use is no longer recommended.  While it can 
+make for "flashy" demos, the use of the C<create=static> mode we use 
+below can be implemented just as quickly and provides many advantages 
+(such as the ability to add your own methods to the overall DBIC 
+framework, a technique that we see in Chapter 4).
 
 
-=head2 Create a Dynamic DBIC Model
+=head2 Make Sure You Have a Recent Version of the DBIx::Class Model
 
-Use the C<create=dynamic> model helper option to build a model that
-dynamically reads your database structure every time the application
-starts:
+First, let's be sure we have a recent version of the DBIC helper,
+L<Catalyst::Model::DBIC::Schema|Catalyst::Model::DBIC::Schema>, by
+running this command:
+
+    $ perl -MCatalyst::Model::DBIC::Schema -e \
+        'print "$Catalyst::Model::DBIC::Schema::VERSION\n"'
+    0.23
+
+If you don't have version 0.23 or higher, please run this command
+to install it directly from CPAN:
+
+    $ sudo cpan Catalyst::Model::DBIC::Schema
+
+And re-run the version print command to verify that you are now at 
+0.23 or higher.
+
+
+=head2 Create Static DBIx::Class Schema Files
+
+Use the model helper with the C<create=static> option to read the 
+database with 
+L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> and 
+automatically build the required files for us:
 
     $ script/myapp_create.pl model DB DBIC::Schema MyApp::Schema \
-        create=dynamic dbi:SQLite:myapp.db
+        create=static components=TimeStamp dbi:SQLite:myapp.db
      exists "/home/me/MyApp/script/../lib/MyApp/Model"
      exists "/home/me/MyApp/script/../t"
-     exists "/home/me/MyApp/script/../lib/MyApp"
-    created "/home/me/MyApp/script/../lib/MyApp/Schema.pm"
+    Dumping manual schema for MyApp::Schema to directory /home/me/MyApp/script/../lib ...
+    Schema dump completed.
     created "/home/me/MyApp/script/../lib/MyApp/Model/DB.pm"
     created "/home/me/MyApp/script/../t/model_DB.t"
 
+The C<script/myapp_create.pl> command breaks down like this:
+
+=over 4
+
+=item *
+
+C<DB> is the name of the model class to be created by the helper in 
+C<lib/MyApp/Model>.
+
+=item *
+
+C<DBIC::Schema> is the type of the model to create.
+
+=item *
+
+C<MyApp::Schema> is the name of the DBIC schema file written to
+C<lib/MyApp/Schema.pm>.
+
+=item *
+
+C<create=static> causes 
+L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> to 
+load the schema as it runs and then write that information out
+into files.
+
+=item *
+
+C<components=TimeStamp> causes the help to include the 
+L<DBIx::Class::TimeStamp|DBIx::Class::TimeStamp> DBIC component.
+
+=item *
+
+And finally, C<dbi:SQLite:myapp.db> is the standard DBI connect string 
+for use with SQLite.
+
+=back
+
+If you look in the C<lib/MyApp/Schema.pm> file, you will find that it 
+only contains a call to the C<load_namespaces> method.  You will also 
+find that C<lib/MyApp> contains a C<Schema> subdirectory, which then 
+has a subdirectory called "Result".  This "Result" subdirectory then 
+has files named according to each of the tables in our simple database 
+(C<Authors.pm>, C<BookAuthors.pm>, and C<Books.pm>).  These three 
+files are called "Result Classes" in DBIx::Class nomenclature. Although the 
+Result Class files are named after tables in our database, the classes 
+correspond to the I<row-level data> that is returned by DBIC (more on 
+this later, especially in 
+L<Catalyst::Manual::Tutorial::BasicCRUD/EXPLORING THE POWER OF DBIC>).
+
+The idea with the Result Source files created under 
+C<lib/MyApp/Schema/Result> by the C<create=static> option is to only 
+edit the files below the C<# DO NOT MODIFY THIS OR ANYTHING ABOVE!> 
+warning. If you place all of your changes below that point in the 
+file, you can regenerate the automatically created information at the 
+top of each file should your database structure get updated.
+
+Also note the "flow" of the model information across the various files 
+and directories.  Catalyst will initially load the model from 
+C<lib/MyApp/Model/DB.pm>.  This file contains a reference to 
+C<lib/MyApp/Schema.pm>, so that file is loaded next.  Finally, the 
+call to C<load_namespaces> in C<Schema.pm> will load each of the 
+"Result Class" files from the C<lib/MyApp/Schema/Result> subdirectory. 
+The final outcome is that Catalyst will dynamically create three 
+table-specific Catalyst models every time the application starts (you 
+can see these three model files listed in the debug output generated 
+when you launch the application).
+
+B<NOTE:> Older versions of 
+L<Catalyst::Model::DBIC::Schema|Catalyst::Model::DBIC::Schema> use the 
+deprecated DBIx::Class C<load_classes> technique instead of the newer 
+C<load_namspaces>.  For new applications, please try to use 
+C<load_namespaces> since it more easily supports a very useful DBIC 
+technique called "ResultSet Classes."  If you need to convert an 
+existing application from "load_classes" to "load_namespaces," you can 
+use this process to automate the migration (but first make sure you 
+have v0.23 C<Catalyst::Model::DBIC::Schema> as discussed above):
+
+    $ # First delete the existing schema file to disable "compatibility" mode
+    $ rm lib/MyApp/Schema.pm
+    $
+    $ # Then re-run the helper to build the files for "load_namespaces"
+    $ script/myapp_create.pl model DB DBIC::Schema MyApp::Schema \
+        create=static components=TimeStamp dbi:SQLite:myapp.db
+    $
+    $ # Now convert the existing files over
+    $ cd lib/MyApp/Schema
+    $ perl -MIO::All -e 'for (@ARGV) { my $s < io($_); $s =~ s/.*\n\# You can replace.*?\n//s;
+          $s =~ s/'MyApp::Schema::/'MyApp::Schema::Result::/g; my $d < io("Result/$_");
+          $d =~ s/1;\n?//; "$d$s" > io("Result/$_"); }' *.pm
+    $ cd ../../..
+    $
+    $ # And finally delete the old files
+    $ rm lib/MyApp/Schema/*.pm
+
+The "C<perl -MIO::ALL ...>" script will copy all the customized 
+relationship (and other) information below "C<# DO NOT MODIFY>" line 
+from the old files in C<lib/MyApp/Schema> to the new files in 
+C<lib/MyApp/Schema/Result> (we will be starting to add some 
+"customized relationship information in the section below).
 
 The C<script/myapp_create.pl> command breaks down like this:
 
@@ -696,11 +831,6 @@ And finally, C<dbi:SQLite:myapp.db> is the standard DBI connect string
 for use with SQLite.
 
 =back
-
-B<NOTE:> Although the C<create=dynamic> option to the DBIC helper
-makes for a nifty demonstration, is only really suitable for very
-small applications. After this demonstration, you should almost always
-use the C<create=static> option that we switch to below.
 
 
 =head1 ENABLE THE MODEL IN THE CONTROLLER
@@ -736,7 +866,7 @@ B<TIP>: You may see the C<$c-E<gt>model('DB::Books')> un-commented
 above written as C<$c-E<gt>model('DB')-E<gt>resultset('Books')>.  The 
 two are equivalent.  Either way, C<$c-E<gt>model> returns a 
 L<DBIx::Class::ResultSet|DBIx::Class::ResultSet> which handles queries 
-against the database and iterating over the set of results that are 
+against the database and iterating over the set of results that is 
 returned.
 
 We are using the C<-E<gt>all> to fetch all of the books.  DBIC 
@@ -763,14 +893,14 @@ code:
 
     $ export DBIC_TRACE=1
 
-This assumes you are using BASH as your shell -- adjust accordingly if
+This assumes you are using bash as your shell -- adjust accordingly if
 you are using a different shell (for example, under tcsh, use
 C<setenv DBIC_TRACE 1>).
 
 B<NOTE:> You can also set this in your code using
 C<$class-E<gt>storage-E<gt>debug(1);>.  See
 L<DBIx::Class::Manual::Troubleshooting> for details (including options
-to log to file instead of displaying to the Catalyst development server
+to log to a file instead of displaying to the Catalyst development server
 log).
 
 Then launch the Catalyst development server.  The log output should
@@ -861,8 +991,8 @@ books loaded by the C<myapp01.sql> script above without any formatting.
 The rating for each book should appear on each row, but the "Author(s)"
 column will still be blank (we will fill that in later).
 
-Also notice in the output of the C<script/myapp_server.pl> that DBIC
-used the following SQL to retrieve the data:
+Also notice in the output of the C<script/myapp_server.pl> that 
+DBIx::Class used the following SQL to retrieve the data:
 
     SELECT me.id, me.title, me.rating FROM books me
 
@@ -1046,126 +1176,7 @@ provide a template that fills in the C<content> section of our wrapper
 template -- the wrapper will provide the overall feel of the page.
 
 
-=head1 A STATIC DATABASE MODEL WITH C<DBIx::Class>
-
-First, let's be sure we have a recent versino of the DBIC helper,
-L<Catalyst::Model::DBIC::Schema|Catalyst::Model::DBIC::Schema>, by
-running this command:
-
-    $ perl -MCatalyst::Model::DBIC::Schema -e \
-        'print "$Catalyst::Model::DBIC::Schema::VERSION\n"'
-    0.23
-
-If you don't have version 0.23 or higher, please run this command
-to install it directly from CPAN:
-
-    $ sudo cpan Catalyst::Model::DBIC::Schema
-
-And re-run the version print command to verify that you are now at 
-0.23 or higher.
-
-
-=head2 Create Static DBIC Schema Files
-
-Unlike the previous DBIC section where we had C<create=dynamic>
-automatically discover the structure of the database every time the
-application started, here we will use static schema files for more
-control.  This is typical of most "real world" applications.
-
-One option would be to manually create a separate schema file for each 
-table in the database, however, lets use the same 
-L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> used 
-earlier with C<create=dynamic> to build the static files for us. 
-First, lets remove the schema file created earlier:
-
-    $ rm lib/MyApp/Schema.pm
-
-Now regenerate the schema using the C<create=static> option:
-
-    $ script/myapp_create.pl model DB DBIC::Schema MyApp::Schema \
-        create=static components=TimeStamp dbi:SQLite:myapp.db
-     exists "/home/me/MyApp/script/../lib/MyApp/Model"
-     exists "/home/me/MyApp/script/../t"
-    Dumping manual schema for MyApp::Schema to directory /home/me/MyApp/script/../lib ...
-    Schema dump completed.
-     exists "/home/me/MyApp/script/../lib/MyApp/Model/DB.pm"
-
-We could have also deleted C<lib/MyApp/Model/DB.pm>, but it would
-have regenerated the same file (note the C<exists> in the output above).
-If you take a look at C<lib/MyApp/Model/DB.pm>, it simply contains
-a reference to the actual schema file in C<lib/MyApp/Schema.pm>
-along with the database connect string.
-
-If you look in the C<lib/MyApp/Schema.pm> file, you will find that it 
-is no longer using 
-L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> as its base 
-class (L<DBIx::Class::Schema::Loader|DBIx::Class::Schema::Loader> is 
-only being used by the helper to load the schema once and then create 
-the static files for us) and C<Schema.pm> only contains a call to the 
-C<load_namespaces> method.  You will also find that C<lib/MyApp> 
-contains a C<Schema> subdirectory, which then has a subdirectory 
-called "Result".  This "Result" subdirectory then has files named 
-according to each of the tables in our simple database (C<Authors.pm>, 
-C<BookAuthors.pm>, and C<Books.pm>).  These three files are called 
-"Result Classes" in DBIC nomenclature. Although the Result Class files 
-are named after tables in our database, the classes correspond to the 
-I<row-level data> that is returned by DBIC (more on this later, 
-especially in 
-L<Catalyst::Manual::Tutorial::BasicCRUD/EXPLORING THE POWER OF DBIC>.
-
-The idea with the Result Source files created under 
-C<lib/MyApp/Schema/Result> by the C<create=static> option is to only 
-edit the files below the C<# DO NOT MODIFY THIS OR ANYTHING ABOVE!> 
-warning. If you place all of your changes below that point in the 
-file, you can regenerate the automatically created information at the 
-top of each file should your database structure get updated.
-
-Also note the "flow" of the model information across the various files 
-and directories.  Catalyst will initially load the model from 
-C<lib/MyApp/Model/DB.pm>.  This file contains a reference to 
-C<lib/MyApp/Schema.pm>, so that file is loaded next.  Finally, the 
-call to C<load_namespaces> in C<Schema.pm> will load each of the 
-"Result Class" files from the C<lib/MyApp/Schema/Result> subdirectory. 
-The final outcome is that Catalyst will dynamically create three 
-table-specific Catalyst models every time the application starts (you 
-can see these three model files listed in the debug output generated 
-when you launch the application).
-
-B<NOTE:> Older versions of 
-L<Catalyst::Model::DBIC::Schema|Catalyst::Model::DBIC::Schema> use the 
-deprecated DBIC C<load_classes> technique instead of the newer 
-C<load_namspaces>.  For new applications, please try to use 
-C<load_namespaces> since it more easily supports a very useful DBIC 
-technique called "ResultSet Classes."  If you need to convert an 
-existing application from "load_classes" to "load_namespaces," you can 
-use this process to automate the migration (but first make sure you 
-have v0.23 C<Catalyst::Model::DBIC::Schema> as discussed above):
-
-    $ # First delete the existing schema file to disable "compatibility" mode
-    $ rm lib/MyApp/Schema.pm
-    $
-    $ # Then re-run the helper to build the files for "load_namespaces"
-    $ script/myapp_create.pl model DB DBIC::Schema MyApp::Schema \
-        create=static components=TimeStamp dbi:SQLite:myapp.db
-    $
-    $ # Now convert the existing files over
-    $ cd lib/MyApp/Schema
-    $ perl -MIO::All -e 'for (@ARGV) { my $s < io($_); $s =~ s/.*\n\# You can replace.*?\n//s;
-          $s =~ s/'MyApp::Schema::/'MyApp::Schema::Result::/g; my $d < io("Result/$_");
-          $d =~ s/1;\n?//; "$d$s" > io("Result/$_"); }' *.pm
-    $ cd ../../..
-    $
-    $ # And finally delete the old files
-    $ rm lib/MyApp/Schema/*.pm
-
-The "C<perl -MIO::ALL ...>" script will copy all the customized 
-relationship (and other) information below "C<# DO NOT MODIFY>" line 
-from the old files in C<lib/MyApp/Schema> to the new files in 
-C<lib/MyApp/Schema/Result> (we will be starting to add some 
-"customized relationship information in the section below).
-
-
-=head2 Updating the Generated DBIC Result Class Files
+=head2 Updating the Generated DBIx::Class Result Class Files
 
 Let's manually add some relationship information to the auto-generated 
 Result Class files. (Note: if you are using a database other than 
@@ -1202,26 +1213,26 @@ C<1;> on a line by itself.
 C<Important Note:> Although this tutorial uses plural names for both 
 the names of the SQL tables and therefore the Result Classes (after 
 all, C<Schema::Loader> automatically named the Result Classes from the 
-names of the SQL tables it found), DBIC users prefer singular names 
-for these items.  B<Please try to use singular table and DBIC 
+names of the SQL tables it found), DBIx::Class users prefer singular 
+names for these items.  B<Please try to use singular table and DBIC 
 model/Result Class names in your applications.>  This tutorial will 
 migrate to singular names as soon as possible (patches welcomed). 
 B<Note that while singular is preferred for the DBIC model, plural is 
 perfectly acceptable for the names of the controller classes.>  After 
 all, the C<Books.pm> controller operates on multiple books.
 
-This code defines both a C<has_many> and a C<many_to_many> relationship.
-The C<many_to_many> relationship is optional, but it makes it easier to
-map a book to its collection of authors.  Without it, we would have to
-"walk" though the C<book_authors> table as in 
-C<$book-E<gt>book_authors-E<gt>first-E<gt>author-E<gt>last_name> 
-(we will see examples on how to use DBIC objects in your code soon, 
+This code defines both a C<has_many> and a C<many_to_many> 
+relationship. The C<many_to_many> relationship is optional, but it 
+makes it easier to map a book to its collection of authors.  Without 
+it, we would have to "walk" though the C<book_authors> table as in 
+C<$book-E<gt>book_authors-E<gt>first-E<gt>author-E<gt>last_name> (we 
+will see examples on how to use DBIx::Class objects in your code soon, 
 but note that because C<$book-E<gt>book_authors> can return multiple 
 authors, we have to use C<first> to display a single author). 
-C<many_to_many> allows us to use the shorter 
-C<$book-E<gt>authors-E<gt>first-E<gt>last_name>. 
-Note that you cannot define a C<many_to_many> relationship without 
-also having the C<has_many> relationship in place.
+C<many_to_many> allows us to use the shorter C<$book-E<gt>authors-
+E<gt>first-E<gt>last_name>. Note that you cannot define a 
+C<many_to_many> relationship without also having the C<has_many> 
+relationship in place.
 
 Then edit C<lib/MyApp/Schema/Result/Authors.pm> and add relationship
 information as follows (again, be careful to put in above the C<1;> but
@@ -1233,7 +1244,7 @@ below the C<# DO NOT MODIFY THIS OR ANYTHING ABOVE!> comment):
     
     # has_many():
     #   args:
-    #     1) Name of relationship, DBIC will create accessor with this name
+    #     1) Name of relationship, DBIC will create an accessor with this name
     #     2) Name of the model class referenced by this relationship
     #     3) Column name in *foreign* table (aka, foreign key in peer table)
     __PACKAGE__->has_many(book_author => 'MyApp::Schema::Result::BookAuthors', 'author_id');
@@ -1270,9 +1281,9 @@ C<lib/MyApp/Schema/Result/BookAuthors.pm>:
 
 =head2 Run The Application
 
-Run the Catalyst "demo server" script with the C<DBIC_TRACE> option
-(it might still be enabled from earlier in the tutorial, but here
-is an alternate way to specify the option just in case):
+Run the Catalyst development server script with the C<DBIC_TRACE> option
+(it might still be enabled from earlier in the tutorial, but here is an
+alternate way to specify the option just in case):
 
     $ DBIC_TRACE=1 script/myapp_server.pl
 
@@ -1294,11 +1305,8 @@ template to do that.
 
 Let's add a new column to our book list page that takes advantage of 
 the relationship information we manually added to our schema files in 
-the previous section.  Edit C<root/src/books/list.tt2> add add the 
-following code below the existing table cell that contains 
-C<book.rating> (IOW, add a new table cell below the existing two 
-C<E<lt>tdE<gt>> tags but above the closing C<E<lt>/trE<gt>> and 
-C<E<lt>/tableE<gt>> tags):
+the previous section.  Edit C<root/src/books/list.tt2> and replace
+the "empty" tabase cell with the following:
 
     ...
     <td>
@@ -1330,7 +1338,7 @@ browser window.)
 If you are still running the development server with C<DBIC_TRACE>
 enabled, you should also now see five more C<SELECT> statements in the
 debug output (one for each book as the authors are being retrieved by
-DBIC):
+DBIx::Class):
 
     SELECT me.id, me.title, me.rating FROM books me:
     SELECT author.id, author.first_name, author.last_name FROM book_authors me  
@@ -1380,13 +1388,13 @@ skip to Chapter 4, L<Basic CRUD|Catalyst::Manual::Tutorial::BasicCRUD>,
 if you wish.>
 
 
-=head2 Using C<RenderView> for the Default View
+=head2 Using 'RenderView' for the Default View
 
 Once your controller logic has processed the request from a user, it
 forwards processing to your view in order to generate the appropriate
 response output.  Catalyst uses
 L<Catalyst::Action::RenderView|Catalyst::Action::RenderView> by
-default to automatically performs this operation.  If you look in
+default to automatically perform this operation.  If you look in
 C<lib/MyApp/Controller/Root.pm>, you should see the empty
 definition for the C<sub end> method:
 
@@ -1425,7 +1433,7 @@ C<RenderView> logic by adding your own code inside the empty method body
 (C<{}>) created by the Catalyst Helpers when we first ran the
 C<catalyst.pl> to initialize our application.  See
 L<Catalyst::Action::RenderView|Catalyst::Action::RenderView> for more
-detailed information on how to extended C<RenderView> in C<sub end>.
+detailed information on how to extend C<RenderView> in C<sub end>.
 
 =back
 
@@ -1475,7 +1483,7 @@ the C<$c-E<gt>detach> mechanisms (these are discussed in Chapter 2 and
 Chapter 9 of the Tutorial).
 
 
-=head2 Return To A Manually-Specified Template
+=head2 Return To A Manually Specified Template
 
 In order to be able to use C<$c-E<gt>forward> and C<$c-E<gt>detach>
 later in the tutorial, you should remove the comment from the
