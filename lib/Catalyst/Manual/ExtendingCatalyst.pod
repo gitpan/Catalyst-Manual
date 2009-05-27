@@ -119,11 +119,15 @@ via multiple inheritence, if your functionality is well structured, then
 it's possible to use the composability of L<Moose> roles, and method modifiers
 to hook onto to provide functionality.
 
-For a simple example of this, see L<CatalystX::REPL>.
+These can be applied to your models/views/controllers, and your application
+class, and shipped to CPAN.
+Please see L<Catalyst::Manual::CatalystAndMoose> for specific information
+about using Roles in combination with Catalyst, and L<Moose::Manual::Roles>
+for more information about roles in general.
 
 =head2 Inheritance and overriding methods
 
-When overriding a method, keep in mind that some day additionally
+When overriding a method, keep in mind that some day additionall
 arguments may be provided to the method, if the last parameter is not
 a flat list. It is thus better to override a method by shifting the
 invocant off of C<@_> and assign the rest of the used arguments, so
@@ -593,7 +597,7 @@ A simple example like this is actually better as a L<Moose> role, for example:
 
   package CatalystX::UriforUndefWarning;
   use Moose::Role;
-  use namespace::clean -except => 'meta';
+  use namespace::autoclean;
 
   after 'uri_for' => sub {
     my ($c, $arg) = @_;
@@ -626,12 +630,15 @@ Here is a stub C<COMPONENT> method:
 
   sub COMPONENT {
       my $class = shift;
-      my ($app_class, $config) = @_;
+      # Note: $app is like $c, but since the application isn't fully
+      # initialized, we don't want to call it $c yet.  $config 
+      # is a hashref of config options possibly set on this component.
+      my ($app, $config) = @_;
 
-      # do things here before instantiation my
-      $obj = $self->next::method(@_);
-      # do things to object after instantiation
-      return $object;
+      # Do things here before instantiation
+      $new = $class->next::method(@_);
+      # Do things to object after instantiation
+      return $new;
   }
 
 The arguments are the class name of the component, the class name of

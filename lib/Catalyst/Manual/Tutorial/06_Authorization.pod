@@ -1,6 +1,6 @@
 =head1 NAME
 
-Catalyst::Manual::Tutorial::Authorization - Catalyst Tutorial - Chapter 6: Authorization
+Catalyst::Manual::Tutorial::06_Authorization - Catalyst Tutorial - Chapter 6: Authorization
 
 
 =head1 OVERVIEW
@@ -13,43 +13,43 @@ L<Tutorial Overview|Catalyst::Manual::Tutorial>
 
 =item 1
 
-L<Introduction|Catalyst::Manual::Tutorial::Intro>
+L<Introduction|Catalyst::Manual::Tutorial::01_Intro>
 
 =item 2
 
-L<Catalyst Basics|Catalyst::Manual::Tutorial::CatalystBasics>
+L<Catalyst Basics|Catalyst::Manual::Tutorial::02_CatalystBasics>
 
 =item 3
 
-L<More Catalyst Basics|Catalyst::Manual::Tutorial::MoreCatalystBasics>
+L<More Catalyst Basics|Catalyst::Manual::Tutorial::03_MoreCatalystBasics>
 
 =item 4
 
-L<Basic CRUD|Catalyst::Manual::Tutorial::BasicCRUD>
+L<Basic CRUD|Catalyst::Manual::Tutorial::04_BasicCRUD>
 
 =item 5
 
-L<Authentication|Catalyst::Manual::Tutorial::Authentication>
+L<Authentication|Catalyst::Manual::Tutorial::05_Authentication>
 
 =item 6
 
-B<Authorization>
+B<06_Authorization>
 
 =item 7
 
-L<Debugging|Catalyst::Manual::Tutorial::Debugging>
+L<Debugging|Catalyst::Manual::Tutorial::07_Debugging>
 
 =item 8
 
-L<Testing|Catalyst::Manual::Tutorial::Testing>
+L<Testing|Catalyst::Manual::Tutorial::08_Testing>
 
 =item 9
 
-L<Advanced CRUD|Catalyst::Manual::Tutorial::AdvancedCRUD>
+L<Advanced CRUD|Catalyst::Manual::Tutorial::09_AdvancedCRUD>
 
 =item 10
 
-L<Appendices|Catalyst::Manual::Tutorial::Appendices>
+L<Appendices|Catalyst::Manual::Tutorial::10_Appendices>
 
 =back
 
@@ -65,7 +65,7 @@ can simplify your code and make things easier to maintain.
 
 You can checkout the source code for this example from the catalyst
 subversion repository as per the instructions in
-L<Catalyst::Manual::Tutorial::Intro|Catalyst::Manual::Tutorial::Intro>.
+L<Catalyst::Manual::Tutorial::01_Intro|Catalyst::Manual::Tutorial::01_Intro>.
 
 
 =head1 BASIC AUTHORIZATION
@@ -79,24 +79,34 @@ Catalyst.
 Edit C<lib/MyApp.pm> and add C<Authorization::Roles> to the list:
 
     # Load plugins
-    use Catalyst qw/-Debug
-                ConfigLoader
-                Static::Simple
+    use Catalyst qw/
+                    -Debug
+                    ConfigLoader
+                    Static::Simple
                 
-                StackTrace
+                    StackTrace
                 
-                Authentication
-                Authorization::Roles
+                    Authentication
+                    Authorization::Roles
         
-                Session
-                Session::Store::FastMmap
-                Session::State::Cookie
-                /;
+                    Session
+                    Session::Store::FastMmap
+                    Session::State::Cookie
+                    /;
 
 B<Note:> As discussed in MoreCatalystBasics, different versions of 
 C<Catalyst::Devel> have used a variety of methods to load the plugins. 
 You can put the plugins in the C<use Catalyst> statement if you 
 prefer.
+
+Once again (remain sharp, by now you should be getting the hang of things)
+include this additional plugin as a new dependency in the Makefile.PL file
+like this:
+
+    requires (
+        ...
+        'Catalyst::Plugin::Authorization::Roles' => '0',
+    );
 
 
 =head2 Add Role-Specific Logic to the "Book List" Template
@@ -160,7 +170,7 @@ updating C<url_create> to match the following code:
         if ($c->check_user_roles('admin')) {
             # Call create() on the book model object. Pass the table
             # columns/field values we want to set as hash values
-            my $book = $c->model('DB::Books')->create({
+            my $book = $c->model('DB::Book')->create({
                     title   => $title,
                     rating  => $rating
                 });
@@ -236,7 +246,7 @@ your controllers and views be an "thin" as possible, with all of the
 
 For example, let's add a method to our C<Books.pm> Result Class to 
 check if a user is allowed to delete a book.  Open 
-C<lib/MyApp/Schema/Result/Books.pm> and add the following method 
+C<lib/MyApp/Schema/Result/Book.pm> and add the following method 
 (be sure to add it below the "C<DO NOT MODIFY ...>" line):
 
     =head2 delete_allowed_by
@@ -254,7 +264,7 @@ C<lib/MyApp/Schema/Result/Books.pm> and add the following method
 
 Here we call a C<has_role> method on our user object, so we should add 
 this method to our Result Class.  Open 
-C<lib/MyApp/Schema/Result/Users.pm> and add the following method below 
+C<lib/MyApp/Schema/Result/User.pm> and add the following method below 
 the "C<DO NOT MODIFY ...>" line:
 
     =head 2 has_role
@@ -297,7 +307,7 @@ match the following code:
     
         # Redirect the user back to the list page
         $c->response->redirect($c->uri_for($self->action_for('list')));
-    }    
+    }
 
 Here, we C<detach> to an error page if the user is lacking the 
 appropriate permissions.  For this to work, we need to make 
@@ -347,7 +357,7 @@ Kennedy Clark, C<hkclark@gmail.com>
 
 Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
-L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.70/trunk/lib/Catalyst/Manual/Tutorial/>.
+L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.80/trunk/lib/Catalyst/Manual/Tutorial/>.
 
 Copyright 2006-2008, Kennedy Clark, under Creative Commons License
 (L<http://creativecommons.org/licenses/by-sa/3.0/us/>).

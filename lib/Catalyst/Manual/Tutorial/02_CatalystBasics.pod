@@ -1,6 +1,6 @@
 =head1 NAME
 
-Catalyst::Manual::Tutorial::CatalystBasics - Catalyst Tutorial - Chapter 2: Catalyst Application Development Basics
+Catalyst::Manual::Tutorial::02_CatalystBasics - Catalyst Tutorial - Chapter 2: Catalyst Application Development Basics
 
 
 =head1 OVERVIEW
@@ -13,43 +13,43 @@ L<Tutorial Overview|Catalyst::Manual::Tutorial>
 
 =item 1
 
-L<Introduction|Catalyst::Manual::Tutorial::Intro>
+L<Introduction|Catalyst::Manual::Tutorial::01_Intro>
 
 =item 2
 
-B<Catalyst Basics>
+B<02_Catalyst Basics>
 
 =item 3
 
-L<More Catalyst Basics|Catalyst::Manual::Tutorial::MoreCatalystBasics>
+L<More Catalyst Basics|Catalyst::Manual::Tutorial::03_MoreCatalystBasics>
 
 =item 4
 
-L<Basic CRUD|Catalyst::Manual::Tutorial::BasicCRUD>
+L<Basic CRUD|Catalyst::Manual::Tutorial::04_BasicCRUD>
 
 =item 5
 
-L<Authentication|Catalyst::Manual::Tutorial::Authentication>
+L<Authentication|Catalyst::Manual::Tutorial::05_Authentication>
 
 =item 6
 
-L<Authorization|Catalyst::Manual::Tutorial::Authorization>
+L<Authorization|Catalyst::Manual::Tutorial::06_Authorization>
 
 =item 7
 
-L<Debugging|Catalyst::Manual::Tutorial::Debugging>
+L<Debugging|Catalyst::Manual::Tutorial::07_Debugging>
 
 =item 8
 
-L<Testing|Catalyst::Manual::Tutorial::Testing>
+L<Testing|Catalyst::Manual::Tutorial::08_Testing>
 
 =item 9
 
-L<Advanced CRUD|Catalyst::Manual::Tutorial::AdvancedCRUD>
+L<Advanced CRUD|Catalyst::Manual::Tutorial::09_AdvancedCRUD>
 
 =item 10
 
-L<Appendices|Catalyst::Manual::Tutorial::Appendices>
+L<Appendices|Catalyst::Manual::Tutorial::10_Appendices>
 
 =back
 
@@ -109,7 +109,7 @@ to persist and restore objects to/from a relational database.
 
 You can checkout the source code for this example from the catalyst
 subversion repository as per the instructions in
-L<Catalyst::Manual::Tutorial::Intro|Catalyst::Manual::Tutorial::Intro>.
+L<Catalyst::Manual::Tutorial::01_Intro|Catalyst::Manual::Tutorial::01_Intro>.
 
 
 =head1 CREATE A CATALYST PROJECT
@@ -219,7 +219,7 @@ previous step):
     | /                                   | /index                               |
     '-------------------------------------+--------------------------------------'
     
-    [info] Hello powered by Catalyst 5.71000
+    [info] Hello powered by Catalyst 5.80004
     You can connect to your server at http://debian:3000
 
 Point your web browser to L<http://localhost:3000> (substituting a 
@@ -456,7 +456,7 @@ Kennedy Clark, C<hkclark@gmail.com>
 
 Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
-L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.70/trunk/lib/Catalyst/Manual/Tutorial/>.
+L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.80/trunk/lib/Catalyst/Manual/Tutorial/>.
 
 Copyright 2006-2008, Kennedy Clark & Gerda Shank, under Creative Commons License
 (L<http://creativecommons.org/licenses/by-sa/3.0/us/>).

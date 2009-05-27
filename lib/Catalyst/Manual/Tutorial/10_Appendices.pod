@@ -1,6 +1,6 @@
 =head1 NAME
 
-Catalyst::Manual::Tutorial::Appendices - Catalyst Tutorial - Chapter 10: Appendices
+Catalyst::Manual::Tutorial::10_Appendices - Catalyst Tutorial - Chapter 10: Appendices
 
 
 =head1 OVERVIEW
@@ -13,43 +13,43 @@ L<Tutorial Overview|Catalyst::Manual::Tutorial>
 
 =item 1
 
-L<Introduction|Catalyst::Manual::Tutorial::Intro>
+L<Introduction|Catalyst::Manual::Tutorial::01_Intro>
 
 =item 2
 
-L<Catalyst Basics|Catalyst::Manual::Tutorial::CatalystBasics>
+L<Catalyst Basics|Catalyst::Manual::Tutorial::02_CatalystBasics>
 
 =item 3
 
-L<More Catalyst Basics|Catalyst::Manual::Tutorial::MoreCatalystBasics>
+L<More Catalyst Basics|Catalyst::Manual::Tutorial::03_MoreCatalystBasics>
 
 =item 4
 
-L<Basic CRUD|Catalyst::Manual::Tutorial::BasicCRUD>
+L<Basic CRUD|Catalyst::Manual::Tutorial::04_BasicCRUD>
 
 =item 5
 
-L<Authentication|Catalyst::Manual::Tutorial::Authentication>
+L<Authentication|Catalyst::Manual::Tutorial::05_Authentication>
 
 =item 6
 
-L<Authorization|Catalyst::Manual::Tutorial::Authorization>
+L<Authorization|Catalyst::Manual::Tutorial::06_Authorization>
 
 =item 7
 
-L<Debugging|Catalyst::Manual::Tutorial::Debugging>
+L<Debugging|Catalyst::Manual::Tutorial::07_Debugging>
 
 =item 8
 
-L<Testing|Catalyst::Manual::Tutorial::Testing>
+L<Testing|Catalyst::Manual::Tutorial::08_Testing>
 
 =item 9
 
-L<Advanced CRUD|Catalyst::Manual::Tutorial::AdvancedCRUD>
+L<Advanced CRUD|Catalyst::Manual::Tutorial::09_AdvancedCRUD>
 
 =item 10
 
-B<Appendices>
+B<10_Appendices>
 
 =back
 
@@ -107,7 +107,7 @@ Removes four leading space from the current line through line 44
 
 =head2 "Un-indenting" with Emacs
 
-Although there author has not used Emacs for many years (apologies to
+Although the author has not used Emacs for many years (apologies to
 the Emacs fans out there), here is a quick hint to get you started.  To
 replace the leading spaces of every line in a file, use:
 
@@ -125,6 +125,15 @@ on your version of Emacs, you can either use the mouse or experiment with
 commands such as C<C-SPC> to set the mark at the cursor location and
 C<C-E<lt>> and C<C-E<gt>> to set the mark at the beginning and end of the
 file respectively.
+
+Also, Stefan Kangas sent in the following tip about an alternate 
+approach using the command C<indent-region> to redo the indentation 
+for the currently selected region (adhering to indent rules in the 
+current major mode). You can run the command by typing M-x indent-
+region or pressing the default keybinding C-M-\ in cperl-mode. 
+Additional details can be found here:
+
+L<http://www.gnu.org/software/emacs/manual/html_node/emacs/Indentation-Comman>
 
 
 =head1 APPENDIX 2: USING POSTGRESQL AND MYSQL
@@ -769,7 +778,7 @@ Kennedy Clark, C<hkclark@gmail.com>
 
 Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
-L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.70/trunk/lib/Catalyst/Manual/Tutorial/>.
+L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.80/trunk/lib/Catalyst/Manual/Tutorial/>.
 
 Copyright 2006-2008, Kennedy Clark, under Creative Commons License
 (L<http://creativecommons.org/licenses/by-sa/3.0/us/>).
