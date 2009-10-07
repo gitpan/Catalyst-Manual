@@ -1,5 +1,21 @@
 Revision history for Catalyst-Manual
 
+5.8001 06 Oct 2009
+        - Tutorial
+            - Fix RT #46760
+            - Fix RT #46618
+            - Fix cat-install script URL
+            - Fix typos
+            - Replace reference to deprecated CatalystX::ListFramework::Builder
+              with Catalyst::Plugin::AutoCRUD
+        - Other
+            - Lots of updates thanks to t0m
+            - Update development process / core team docs
+            - Cookbook fixes WRT authorization
+            - Better description of application setup process
+            - Fix some links
+            - Normalise spacing
+
 5.8000 27 May 2009
         - Tutorial:
             - Update for Catalyst 5.80
@@ -18,8 +34,8 @@ Revision history for Catalyst-Manual
             - Switch to use of DBIx::Class::EncodedColumn for hashed & salted passwords
             - Re-write PostgreSQL section in appendix
             - Remove "create=dynamic" and only cover "create=static" for DBIC helper
-            - Rewrite / clean up a big chunk of Catalyst::Manual::Intro (Ian Wells)
         - Other:
+            - Rewrite / clean up a big chunk of Catalyst::Manual::Intro (Ian Wells)
             - There is no Catalyst::Config, fix reference to it. (t0m)
             - Misc minor adjustments
 

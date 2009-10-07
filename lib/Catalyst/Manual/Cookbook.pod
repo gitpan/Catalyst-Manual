@@ -11,7 +11,7 @@ Yummy code like your mum used to bake!
 =head1 Basics
 
 These recipes cover some basic stuff that is worth knowing for
-catalyst developers.
+Catalyst developers.
 
 =head2 Delivering a Custom Error Page
 
@@ -112,14 +112,22 @@ reference.
 
 =head3 EXAMPLE
 
-  use parent qw/Catalyst/;
+  package MyApp;
+  use Moose;
+  use namespace::autoclean;
+
   use Catalyst  qw/
                          Session
                          Session::Store::FastMmap
                          Session::State::Cookie
                    /;
+  extends 'Catalyst';
+  __PACKAGE__->setup;
 
-
+  package MyApp::Controller::Foo;
+  use Moose;
+  use namespace::autoclean;
+  BEGIN { extends 'Catalyst::Controller' };
   ## Write data into the session
 
   sub add_item : Local {
@@ -204,7 +212,7 @@ See also L<Config::General|Config::General>.
 
 =head1 Skipping your VCS's directories
 
-Catalyst uses Module::Pluggable to load Models, Views and Controllers.
+Catalyst uses Module::Pluggable to load Models, Views, and Controllers.
 Module::Pluggable will scan through all directories and load modules
 it finds.  Sometimes you might want to skip some of these directories,
 for example when your version control system makes a subdirectory with
@@ -213,7 +221,7 @@ Catalyst skips subversion and CVS directories already, there are other
 source control systems.  Here is the configuration you need to add
 their directories to the list to skip.
 
-You can make catalyst skip these directories using the Catalyst config:
+You can make Catalyst skip these directories using the Catalyst config:
 
   # Configure the application
   __PACKAGE__->config(
@@ -226,7 +234,7 @@ and other options.
 
 =head1 Users and Access Control
 
-Most multiuser, and some single user web applications require that
+Most multiuser, and some single-user web applications require that
 users identify themselves, and the application is often required to
 define those roles.  The recipes below describe some ways of doing
 this.
@@ -254,67 +262,6 @@ like so:
       }
     }
 
-
-=head2 Role-based Authorization
-
-For more advanced access control, you may want to consider using role-based
-authorization. This means you can assign different roles to each user, e.g.
-"user", "admin", etc.
-
-The C<login> and C<logout> methods and view template are exactly the same as
-in the previous example.
-
-The L<Catalyst::Plugin::Authorization::Roles> plugin is required when
-implementing roles:
-
- use parent qw/Catalyst/;
- use Catalyst qw/
-     Authentication
-     Authentication::Credential::Password
-     Authentication::Store::Htpasswd
-     Authorization::Roles/;
-
-Roles are implemented automatically when using
-L<Catalyst::Authentication::Store::Htpasswd>:
-
-  # no additional role configuration required
-  __PACKAGE__->config->{authentication}{htpasswd} = "passwdfile";
-
-Or can be set up manually when using L<Catalyst::Authentication::Store::DBIC>:
-
-  # Authorization using a many-to-many role relationship
-  __PACKAGE__->config->{authorization}{dbic} = {
-    'role_class'           => 'My::Model::DBIC::Role',
-    'role_field'           => 'name',
-    'user_role_user_field' => 'user',
-
-    # DBIx::Class only (omit if using Class::DBI)
-    'role_rel'             => 'user_role',
-
-    # Class::DBI only, (omit if using DBIx::Class)
-    'user_role_class'      => 'My::Model::CDBI::UserRole'
-    'user_role_role_field' => 'role',
-  };
-
-To restrict access to any action, you can use the C<check_user_roles> method:
-
-  sub restricted : Local {
-     my ( $self, $c ) = @_;
-
-     $c->detach("unauthorized")
-       unless $c->check_user_roles( "admin" );
-
-     # do something restricted here
-  }
-
-You can also use the C<assert_user_roles> method. This just gives an
-error if the current user does not have one of the required roles:
-
-  sub also_restricted : Global {
-    my ( $self, $c ) = @_;
-    $c->assert_user_roles( qw/ user admin / );
-  }
-  
 =head2 Authentication/Authorization
 
 This is done in several steps:
@@ -331,7 +278,7 @@ verification>.
 =item Authorization
 
 Making sure the user only accesses functions you want them to
-access. This is done by checking the verified users data against your
+access. This is done by checking the verified user's data against your
 internal list of groups, or allowed persons for the current page.
 
 =back
@@ -358,17 +305,17 @@ Examples:
 
 A Storage backend contains the actual data representing the users. It
 is queried by the credential verifiers. Updating the store is not done
-within this system, you will need to do it yourself.
+within this system; you will need to do it yourself.
 
 Examples:
 
- DBIC     - Storage using a database.
+ DBIC     - Storage using a database via DBIx::Class.
  Minimal  - Storage using a simple hash (for testing).
 
 =head3 User objects
 
 A User object is created by either the storage backend or the
-credential verifier, and filled with the retrieved user information.
+credential verifier, and is filled with the retrieved user information.
 
 Examples:
 
@@ -377,7 +324,7 @@ Examples:
 =head3 ACL authorization
 
 ACL stands for Access Control List. The ACL plugin allows you to
-regulate access on a path by path basis, by listing which users, or
+regulate access on a path-by-path basis, by listing which users, or
 roles, have access to which paths.
 
 =head3 Roles authorization
@@ -388,34 +335,62 @@ then be assigned to ACLs, or just checked when needed.
 =head3 Logging in
 
 When you have chosen your modules, all you need to do is call the C<<
-$c->login >> method. If called with no parameters, it will try to find
+$c->authenticate >> method. If called with no parameters, it will try to find
 suitable parameters, such as B<username> and B<password>, or you can
 pass it these values.
 
 =head3 Checking roles
 
-Role checking is done by using the C<< $c->check_user_roles >> method,
-this will check using the currently logged in user (via C<< $c->user
+Role checking is done by using the C<< $c->check_user_roles >> method.
+This will check using the currently logged-in user (via C<< $c->user
 >>). You pass it the name of a role to check, and it returns true if
 the user is a member.
 
 =head3 EXAMPLE
 
- use parent qw/Catalyst/;
- use Catalyst qw/Authentication
-                 Authentication::Credential::Password
-                 Authentication::Store::Htpasswd
-                 Authorization::Roles/;
+  package MyApp;
+  use Moose;
+  use namespace::autoclean;
+  extends qw/Catalyst/;
+  use Catalyst qw/
+    Authentication
+    Authorization::Roles
+  /;
 
- __PACKAGE__->config->{authentication}{htpasswd} = "passwdfile";
+  __PACKAGE__->config(
+     authentication => {
+         default_realm => 'test',
+         realms => {
+             test => {
+                 credential => {
+                     class          => 'Password',
+                     password_field => 'password',
+                     password_type  => 'self_check',
+                 },
+                 store => {
+                     class => 'Htpasswd',
+                     file => 'htpasswd',
+                 },
+             },
+         },
+     },   
+  );
 
+  package MyApp::Controller::Root;
+  use Moose;
+  use namespace::autoclean;
+  
+  BEGIN { extends 'Catalyst::Controller' }
+  
+  __PACKAGE__->config(namespace => '');
+  
   sub login : Local {
      my ($self, $c) = @_;
 
      if (    my $user = $c->req->param("user")
          and my $password = $c->req->param("password") )
      {
-         if ( $c->login( $user, $password ) ) {
+         if ( $c->authenticate( username => $user, password => $password ) ) {
               $c->res->body( "hello " . $c->user->name );
          } else {
             # login incorrect
@@ -437,11 +412,11 @@ the user is a member.
 
 =head3 Using authentication in a testing environment
 
-Ideally, to write tests for authentication/authorization code one
-would first set up a test database with known data, then use
+Ideally, to write tests for authentication/authorization code one would
+first set up a test database with known data, then use
 L<Test::WWW::Mechanize::Catalyst> to simulate a user logging
-in. Unfortunately the former can be rather awkward, which is why it's
-a good thing that the authentication framework is so flexible.
+in. Unfortunately this can be rather awkward, which is why it's a good
+thing that the authentication framework is so flexible.
 
 Instead of using a test database, one can simply change the
 authentication store to something a bit easier to deal with in a
@@ -449,38 +424,29 @@ testing environment. Additionally, this has the advantage of not
 modifying one's database, which can be problematic if one forgets to
 use the testing instead of production database.
 
-e.g.,
-
-  use Catalyst::Plugin::Authentication::Store::Minimal::Backend;
-
-  # Sets up the user `test_user' with password `test_pass'
-  MyApp->default_auth_store(
-    Catalyst::Plugin::Authentication::Store::Minimal::Backend->new({
-      test_user => { password => 'test_pass' },
-    })
-  );
-
-Now, your test code can call C<$c->login('test_user', 'test_pass')> and
-successfully login, without messing with the database at all.
+Alternatively, if you want to authenticate real users, but not have to
+worry about their passwords, you can use
+L<Catalyst::Authentication::Credential::Testing> to force all users to
+authenticate with a global password.
 
 =head3 More information
 
-L<http://search.cpan.org/perldoc?Catalyst::Plugin::Authentication> has a longer explanation.
+L<Catalyst::Plugin::Authentication> has a longer explanation.
 
 =head2 Authorization
 
 =head3 Introduction
 
 Authorization is the step that comes after
-authentication. Authentication establishes that the user agent is
-really representing the user we think it's representing, and then
-authorization determines what this user is allowed to do.
+authentication. Authentication establishes that the user agent is really
+representing the user we think it's representing, and then authorization
+determines what this user is allowed to do.
 
 =head3 Role Based Access Control
 
 Under role based access control each user is allowed to perform any
 number of roles. For example, at a zoo no one but specially trained
-personnel can enter the moose cage (Mynd you, mÃ¸Ã¸se bites kan be
+personnel can enter the moose cage (Mynd you, møøse bites kan be
 pretty nasti!). For example:
 
     package Zoo::Controller::MooseCage;
@@ -495,12 +461,12 @@ With this action, anyone can just come into the moose cage and feed
 the moose, which is a very dangerous thing. We need to restrict this
 action, so that only a qualified moose feeder can perform that action.
 
-The Authorization::Roles plugin let's us perform role based access
+The Authorization::Roles plugin lets us perform role based access
 control checks. Let's load it:
 
     use parent qw/Catalyst/;
     use Catalyst qw/
-                    Authentication # yadda yadda
+                    Authentication
                     Authorization::Roles
                   /;
 
@@ -543,7 +509,7 @@ administration).
 
 Checking for roles all the time can be tedious and error prone.
 
-The Authorization::ACL plugin let's us declare where we'd like checks
+The Authorization::ACL plugin lets us declare where we'd like checks
 to be done automatically for us.
 
 For example, we may want to completely block out anyone who isn't a
@@ -594,7 +560,7 @@ If this action does not exist, an error will be thrown, which you can
 clean up in your C<end> private action instead.
 
 Also, it's important to note that if you restrict access to "/" then
-C<end>, C<default>, etc will also be restricted.
+C<end>, C<default>, etc. will also be restricted.
 
    MyApp->acl_allow_root_internals;
 
@@ -615,11 +581,14 @@ can be used outside of Catalyst, e.g.  in a cron job). It's trivial to
 write a simple component in Catalyst that slurps in an outside Model:
 
     package MyApp::Model::DB;
+
     use base qw/Catalyst::Model::DBIC::Schema/;
+
     __PACKAGE__->config(
         schema_class => 'Some::DBIC::Schema',
         connect_info => ['dbi:SQLite:foo.db', '', '', {AutoCommit=>1}];
     );
+
     1;
 
 and that's it! Now C<Some::DBIC::Schema> is part of your
@@ -632,9 +601,9 @@ See L<Catalyst::Model::DBIC::Schema>.
 =head2 Create accessors to preload static data once per server instance
 
 When you have data that you want to load just once from the model at
-server load instead of for each request, use mk_group_accessors to
+startup, instead of for each request, use mk_group_accessors to
 create accessors and tie them to resultsets in your package that
-inherits from DBIx::Class::Schema
+inherits from DBIx::Class::Schema:
 
     package My::Schema;
     use base qw/DBIx::Class::Schema/;
@@ -646,7 +615,7 @@ inherits from DBIx::Class::Schema
     sub connection {
         my ($self, @rest) = @_;
         $self->next::method(@rest);
-        # $self is now a live My::Schema object, complete with DB connection 
+        # $self is now a live My::Schema object, complete with DB connection
 
         $self->ACCESSORNAME1([ $self->resultset('RESULTSOURCEMONIKER')->all ]);
         $self->ACCESSORNAME2([ $self->resultset('RESULTSOURCEMONIKER')->search({ COLUMN => { '<' => '30' } })->all ]);
@@ -658,12 +627,12 @@ inherits from DBIx::Class::Schema
 and now in the controller, you can now access any of these without a
 per-request fetch:
 
-    $c->stash->{something} = $c->model('My::Schema')->schema->ACCESSORNAMEn;
+    $c->stash->{something} = $c->model('My::Schema')->schema->ACCESSORNAME;
 
 
 =head2 XMLRPC
 
-Unlike SOAP, XMLRPC is a very simple (and imo elegant) web-services
+Unlike SOAP, XMLRPC is a very simple (and elegant) web-services
 protocol, exchanging small XML messages like these:
 
 Request:
@@ -762,13 +731,11 @@ enforce a specific one.
         my ( $self, $c, $a, $b ) = @_;
         return RPC::XML::int->new( $a + $b );
     }
-    
-
 
 =head1 Views
 
 Views pertain to the display of your application.  As with models,
-catalyst is uncommonly flexible.  The recipes below are just a start.
+Catalyst is uncommonly flexible.  The recipes below are just a start.
 
 =head2 Catalyst::View::TT
 
@@ -841,7 +808,7 @@ This time, the helper sets several options for us in the generated View.
 
 =over
 
-=item 
+=item
 
 INCLUDE_PATH defines the directories that Template Toolkit should search
 for the template files.
@@ -988,7 +955,7 @@ L<http://search.cpan.org/perldoc?Catalyst%3A%3AView%3A%3ATT>
 
 L<http://search.cpan.org/perldoc?Template>
 
-=head2 Adding RSS feeds 
+=head2 Adding RSS feeds
 
 Adding RSS feeds to your Catalyst applications is simple. We'll see two
 different aproaches here, but the basic premise is that you forward to
@@ -1005,7 +972,7 @@ This is the aproach used in Agave (L<http://dev.rawmode.org/>).
         $c->stash->{template}='rss.tt';
     }
 
-Then you need a template. Here's the one from Agave: 
+Then you need a template. Here's the one from Agave:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -1018,7 +985,7 @@ Then you need a template. Here's the one from Agave:
      [% WHILE (post = posts.next) %]
       <item>
         <title>[% post.title %]</title>
-        <description>[% post.formatted_teaser|html%]</description>    
+        <description>[% post.formatted_teaser|html%]</description>
         <pubDate>[% post.pub_date %]</pubDate>
         <guid>[% post.full_uri %]</guid>
         <link>[% post.full_uri %]</link>
@@ -1026,7 +993,7 @@ Then you need a template. Here's the one from Agave:
       </item>
     [% END %]
       </channel>
-    </rss> 
+    </rss>
 
 =head3 Using XML::Feed
 
@@ -1056,7 +1023,7 @@ like this:
    }
 
 A little more code in the controller, but with this approach you're
-pretty sure to get something that validates. 
+pretty sure to get something that validates.
 
 Note that for both of the above aproaches, you'll need to set the
 content type like this:
@@ -1141,12 +1108,12 @@ you can set it up like this:
 
     sub render : ActionClass('RenderView') { }
 
-    sub end : Private { 
+    sub end : Private {
       my ( $self, $c ) = @_;
       $c->forward('render');
       # do stuff here
     }
-  
+
 =head2 Action Types
 
 =head3 Introduction
@@ -1191,7 +1158,7 @@ and
 
  sub my_handles : Path('/handles') { .. }
 
-becomes 
+becomes
 
  http://localhost:3000/handles
 
@@ -1232,7 +1199,7 @@ matches
 
  http://localhost:3000/handles
 
-and 
+and
 
  http://localhost:3000/handles_and_other_parts
 
@@ -1290,7 +1257,7 @@ the request object using C<< $c->req->path >>.
 works for all unknown URLs, in this controller namespace, or every one
 if put directly into MyApp.pm.
 
-=item index 
+=item index
 
 The index action is called when someone tries to visit the exact
 namespace of your controller. If index, default and matching Path
@@ -1313,7 +1280,7 @@ to the current namespace.
 
  sub begin : Private { .. }
 
-is called once when 
+is called once when
 
  http://localhost:3000/bucket/(anything)?
 
@@ -1342,14 +1309,14 @@ chain of paths up to and including the ending namespace, will be
 called. (In contrast, only one of the begin/end/default actions will
 be called, the relevant one).
 
- package MyApp.pm;
+ package MyApp::Controller::Root;
  sub auto : Private { .. }
 
-and 
+and
 
  sub auto : Private { .. }
 
-will both be called when visiting 
+will both be called when visiting
 
  http://localhost:3000/bucket/(anything)?
 
@@ -1359,13 +1326,10 @@ will both be called when visiting
 
 =head3 A word of warning
 
-Due to possible namespace conflicts with Plugins, it is advised to
-only put the pre-defined Private actions in your main MyApp.pm file,
-all others should go in a Controller module.
+You can put root actions in your main MyApp.pm file, but this is deprecated,
+please put your actions into your Root controller.
 
 =head3 More Information
-
-L<http://search.cpan.org/author/SRI/Catalyst-5.61/lib/Catalyst/Manual/Intro.pod>
 
 L<http://dev.catalyst.perl.org/wiki/FlowChart>
 
@@ -1378,7 +1342,7 @@ Imagine that you would like the following paths in your application:
 =item B</cd/<ID>/track/<ID>>
 
 Displays info on a particular track.
-                                       
+
 In the case of a multi-volume CD, this is the track sequence.
 
 =item B</cd/<ID>/volume/<ID>/track/<ID>>
@@ -1391,41 +1355,41 @@ Here is some example code, showing how to do this with chained controllers:
 
     package CD::Controller;
     use base qw/Catalyst::Controller/;
-    
+
     sub root : Chained('/') PathPart('/cd') CaptureArgs(1) {
         my ($self, $c, $cd_id) = @_;
         $c->stash->{cd_id} = $cd_id;
         $c->stash->{cd} = $self->model('CD')->find_by_id($cd_id);
     }
-    
+
     sub trackinfo : Chained('track') PathPart('') Args(0) RenderView {
         my ($self, $c) = @_;
     }
-    
+
     package CD::Controller::ByTrackSeq;
     use base qw/CD::Controller/;
-    
+
     sub track : Chained('root') PathPart('track') CaptureArgs(1) {
         my ($self, $c, $track_seq) = @_;
         $c->stash->{track} = $self->stash->{cd}->find_track_by_seq($track_seq);
     }
-    
+
     package CD::Controller::ByTrackVolNo;
     use base qw/CD::Controller/;
-    
+
     sub volume : Chained('root') PathPart('volume') CaptureArgs(1) {
         my ($self, $c, $volume) = @_;
         $c->stash->{volume} = $volume;
     }
-    
+
     sub track : Chained('volume') PathPart('track') CaptureArgs(1) {
         my ($self, $c, $track_no) = @_;
         $c->stash->{track} = $self->stash->{cd}->find_track_by_vol_and_track_no(
             $c->stash->{volume}, $track_no
         );
     }
-    
-Note that adding other actions (i.e. chain endpoints) which operate on a track 
+
+Note that adding other actions (i.e. chain endpoints) which operate on a track
 is simply a matter of adding a new sub to CD::Controller - no code is duplicated,
 even though there are two different methods of looking up a track.
 
@@ -1537,7 +1501,7 @@ the Catalyst Request object:
   $c->req->args([qw/arg1 arg2 arg3/]);
   $c->forward('/wherever');
 
-(See the L<Catalyst::Manual::Intro> Flow_Control section for more 
+(See the L<Catalyst::Manual::Intro> Flow_Control section for more
 information on passing arguments via C<forward>.)
 
 =head2 Chained dispatch using base classes, and inner packages.
@@ -1545,7 +1509,7 @@ information on passing arguments via C<forward>.)
   package MyApp::Controller::Base;
   use base qw/Catalyst::Controller/;
 
-  sub key1 : Chained('/') 
+  sub key1 : Chained('/')
 
 =head1 Deployment
 
@@ -1600,7 +1564,7 @@ to run a Catalyst app.
 
 =head4 1. Install Catalyst::Engine::Apache
 
-You should install the latest versions of both Catalyst and 
+You should install the latest versions of both Catalyst and
 Catalyst::Engine::Apache.  The Apache engines were separated from the
 Catalyst core in version 5.50 to allow for updates to the engine without
 requiring a new Catalyst release.
@@ -1627,7 +1591,7 @@ Here is a basic Apache 2 configuration.
 
     PerlSwitches -I/var/www/MyApp/lib
     PerlModule MyApp
-    
+
     <Location />
         SetHandler          modperl
         PerlResponseHandler MyApp
@@ -1659,7 +1623,7 @@ of your choice.
         SetHandler          modperl
         PerlResponseHandler MyApp
     </Location>
-    
+
 When running this way, it is best to make use of the C<uri_for> method in
 Catalyst for constructing correct links.
 
@@ -1671,7 +1635,7 @@ Static files can be served directly by Apache for a performance boost.
     <Location /static>
         SetHandler default-handler
     </Location>
-    
+
 This will let all files within root/static be handled directly by Apache.  In
 a two-tiered setup, the frontend server should handle static files.
 The configuration to do this on the frontend will vary.
@@ -1801,10 +1765,10 @@ for example, libapache2-mod-fastcgi in Debian.
 
     FastCgiServer /var/www/MyApp/script/myapp_fastcgi.pl -processes 3
     Alias /myapp/ /var/www/MyApp/script/myapp_fastcgi.pl/
-    
+
     # Or, run at the root
     Alias / /var/www/MyApp/script/myapp_fastcgi.pl/
-    
+
 The above commands will launch 3 app processes and make the app available at
 /myapp/
 
@@ -1816,12 +1780,12 @@ server gives you much more flexibility.
 First, launch your app as a standalone server listening on a socket.
 
     script/myapp_fastcgi.pl -l /tmp/myapp.socket -n 5 -p /tmp/myapp.pid -d
-    
+
 You can also listen on a TCP port if your web server is not on the same
 machine.
 
     script/myapp_fastcgi.pl -l :8080 -n 5 -p /tmp/myapp.pid -d
-    
+
 You will probably want to write an init script to handle starting/stopping
 of the app using the pid file.
 
@@ -1835,10 +1799,10 @@ Now, we simply configure Apache to connect to the running server.
 
     FastCgiExternalServer /tmp/myapp.fcgi -socket /tmp/myapp.socket
     Alias /myapp/ /tmp/myapp.fcgi/
-    
+
     # Or, run at the root
     Alias / /tmp/myapp.fcgi/
-    
+
 =head3 More Info
 
 L<Catalyst::Engine::FastCGI>.
@@ -1902,7 +1866,7 @@ Make sure mod_proxy is enabled and add:
     ProxyPass / http://localhost:8080/
     ProxyPassReverse / http://localhost:8080/
 
-    # This is optional if you'd like to show a custom error page 
+    # This is optional if you'd like to show a custom error page
     # if the proxy is not available
     ErrorDocument 502 /static/error_pages/http502.html
 
@@ -1939,6 +1903,33 @@ L<Module::Install::Catalyst>, which simplifies the process greatly.  From the sh
 
     % perl Makefile.PL
     % make catalyst_par
+
+You can customise the PAR creation process by special "catalyst_par_*" commands
+available from L<Module::Install::Catalyst>. You can add these commands in your
+Makefile.PL just before the line containing "catalyst;"
+
+    #Makefile.PL example with extra PAR options
+    use inc::Module::Install;
+
+    name 'MyApp';
+    all_from 'lib\MyApp.pm';
+
+    requires 'Catalyst::Runtime' => '5.80005';
+    <snip>
+    ...
+    <snip>
+
+    catalyst_par_core(1);      # bundle perl core modules in the resulting PAR
+    catalyst_par_multiarch(1); # build a multi-architecture PAR file
+    catalyst_par_classes(qw/
+      Some::Additional::Module
+      Some::Other::Module
+    /);          # specify additional modules you want to be included into PAR
+    catalyst;
+
+    install_script glob('script/*.pl');
+    auto_install;
+    WriteAll;
 
 Congratulations! Your package "myapp.par" is ready, the following
 steps are just optional.
@@ -2030,7 +2021,7 @@ Static::Simple look somewhere else, this is as easy as:
 
  MyApp->config->{static}->{include_path} = [
   MyApp->config->{root},
-  '/path/to/my/files' 
+  '/path/to/my/files'
  ];
 
 When you override include_path, it will not automatically append the
@@ -2055,7 +2046,7 @@ be processed by Catalyst): B<tmpl, tt, tt2, html, xhtml>. This list can
 be replaced easily:
 
  MyApp->config->{static}->{ignore_extensions} = [
-    qw/tmpl tt tt2 html xhtml/ 
+    qw/tmpl tt tt2 html xhtml/
  ];
 
 =item Ignoring directories
@@ -2086,7 +2077,7 @@ static content to the view, perhaps like this:
     sub end : Private {
         my ( $self, $c ) = @_;
 
-        $c->forward( 'MyApp::View::TT' ) 
+        $c->forward( 'MyApp::View::TT' )
           unless ( $c->res->body || !$c->stash->{template} );
     }
 
@@ -2194,18 +2185,18 @@ application for a cache because the source document changes
 infrequently but may be viewed many times.
 
     use Catalyst qw/Cache::FileCache/;
-    
+
     ...
-    
+
     use File::stat;
     sub render_pod : Local {
         my ( self, $c ) = @_;
-        
+
         # the cache is keyed on the filename and the modification time
         # to check for updates to the file.
         my $file  = $c->path_to( 'root', '2005', '11.pod' );
         my $mtime = ( stat $file )->mtime;
-        
+
         my $cached_pod = $c->cache->get("$file $mtime");
         if ( !$cached_pod ) {
             $cached_pod = do_slow_pod_rendering();
@@ -2214,7 +2205,7 @@ infrequently but may be viewed many times.
         }
         $c->stash->{pod} = $cached_pod;
     }
-    
+
 We could actually cache the result forever, but using a value such as 12 hours
 allows old entries to be automatically expired when they are no longer needed.
 
@@ -2231,26 +2222,26 @@ thing for every single user who views the page.
 
     sub front_page : Path('/') {
         my ( $self, $c ) = @_;
-        
+
         $c->forward( 'get_news_articles' );
         $c->forward( 'build_lots_of_boxes' );
         $c->forward( 'more_slow_stuff' );
-        
+
         $c->stash->{template} = 'index.tt';
     }
 
 We can add the PageCache plugin to speed things up.
 
     use Catalyst qw/Cache::FileCache PageCache/;
-    
+
     sub front_page : Path ('/') {
         my ( $self, $c ) = @_;
-        
+
         $c->cache_page( 300 );
-        
+
         # same processing as above
     }
-    
+
 Now the entire output of the front page, from <html> to </html>, will be
 cached for 5 minutes.  After 5 minutes, the next request will rebuild the
 page and it will be re-cached.
@@ -2263,14 +2254,14 @@ You can even get that front-end Squid proxy to help out by enabling HTTP
 headers for the cached page.
 
     MyApp->config->{page_cache}->{set_http_headers} = 1;
-    
+
 This would now set the following headers so proxies and browsers may cache
 the content themselves.
 
     Cache-Control: max-age=($expire_time - time)
     Expires: $expire_time
     Last-Modified: $cache_created_time
-    
+
 =head3 Template Caching
 
 Template Toolkit provides support for caching compiled versions of your
@@ -2279,17 +2270,17 @@ TT will cache compiled templates keyed on the file mtime, so changes will
 still be automatically detected.
 
     package MyApp::View::TT;
-    
+
     use strict;
     use warnings;
     use base 'Catalyst::View::TT';
-    
+
     __PACKAGE__->config(
         COMPILE_DIR => '/tmp/template_cache',
     );
-    
+
     1;
-    
+
 =head3 More Info
 
 See the documentation for each cache plugin for more details and other
@@ -2310,10 +2301,10 @@ alterations.
 
 =head2 Testing
 
-Catalyst provides a convenient way of testing your application during 
+Catalyst provides a convenient way of testing your application during
 development and before deployment in a real environment.
 
-C<Catalyst::Test> makes it possible to run the same tests both locally 
+C<Catalyst::Test> makes it possible to run the same tests both locally
 (without an external daemon) and against a remote server via HTTP.
 
 =head3 Tests
@@ -2335,7 +2326,7 @@ response.
 
 =item C<02pod.t>
 
-Verifies that all POD is free from errors. Only executed if the C<TEST_POD> 
+Verifies that all POD is free from errors. Only executed if the C<TEST_POD>
 environment variable is true.
 
 =item C<03podcoverage.t>
@@ -2377,18 +2368,18 @@ take three different arguments:
 
 =back
 
-C<request> returns an instance of C<HTTP::Response> and C<get> returns the 
+C<request> returns an instance of C<HTTP::Response> and C<get> returns the
 content (body) of the response.
 
 =head3 Running tests locally
 
     mundus:~/MyApp chansen$ CATALYST_DEBUG=0 TEST_POD=1 prove --lib lib/ t/
-    t/01app............ok                                                        
-    t/02pod............ok                                                        
-    t/03podcoverage....ok                                                        
+    t/01app............ok
+    t/02pod............ok
+    t/03podcoverage....ok
     All tests successful.
     Files=3, Tests=4,  2 wallclock secs ( 1.60 cusr +  0.36 csys =  1.96 CPU)
- 
+
 C<CATALYST_DEBUG=0> ensures that debugging is off; if it's enabled you
 will see debug logs between tests.
 
@@ -2400,12 +2391,12 @@ find out more about it from the links below.
 =head3 Running tests remotely
 
     mundus:~/MyApp chansen$ CATALYST_SERVER=http://localhost:3000/ prove --lib lib/ t/01app.t
-    t/01app....ok                                                                
+    t/01app....ok
     All tests successful.
     Files=1, Tests=2,  0 wallclock secs ( 0.40 cusr +  0.01 csys =  0.41 CPU)
 
-C<CATALYST_SERVER=http://localhost:3000/> is the absolute deployment URI of 
-your application. In C<CGI> or C<FastCGI> it should be the host and path 
+C<CATALYST_SERVER=http://localhost:3000/> is the absolute deployment URI of
+your application. In C<CGI> or C<FastCGI> it should be the host and path
 to the script.
 
 =head3 C<Test::WWW::Mechanize> and Catalyst
@@ -2500,28 +2491,11 @@ L<http://search.cpan.org/perldoc?Catalyst::Plugin::Authorization::ACL>
 
 =head1 AUTHORS
 
-Sebastian Riedel C<sri@oook.de>
-
-Danijel Milicevic C<me@danijel.de>
-
-Viljo Marrandi C<vilts@yahoo.com>  
-
-Marcus Ramberg C<mramberg@cpan.org>
-
-Jesse Sheidlower C<jester@panix.com>
-
-Andy Grundman C<andy@hybridized.org> 
-
-Chisel Wright C<pause@herlpacker.co.uk>
-
-Will Hawes C<info@whawes.co.uk>
-
-Gavin Henry C<ghenry@perl.me.uk>
-
-Kieren Diment C<kd@totaldatasolution.com>
+Catalyst Contributors, see Catalyst.pm
 
 =head1 COPYRIGHT
 
-This document is free, you can redistribute it and/or modify it
-under the same terms as Perl itself.
+This library is free software. You can redistribute it and/or modify it under
+the same terms as Perl itself.
 
+=cut
