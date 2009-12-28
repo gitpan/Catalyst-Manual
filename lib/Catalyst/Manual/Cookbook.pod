@@ -243,7 +243,7 @@ this.
 
 This is extensively covered in other documentation; see in particular
 L<Catalyst::Plugin::Authentication> and the Authentication chapter
-of the Tutorial at L<Catalyst::Manual::Tutorial::Authorization>.
+of the Tutorial at L<Catalyst::Manual::Tutorial::06_Authorization>.
 
 =head2 Pass-through login (and other actions)
 
@@ -446,7 +446,7 @@ determines what this user is allowed to do.
 
 Under role based access control each user is allowed to perform any
 number of roles. For example, at a zoo no one but specially trained
-personnel can enter the moose cage (Mynd you, møøse bites kan be
+personnel can enter the moose cage (Mynd you, mÃ¸Ã¸se bites kan be
 pretty nasti!). For example:
 
     package Zoo::Controller::MooseCage;
@@ -745,8 +745,8 @@ display your data; you can choose to generate HTML, PDF files, or plain
 text if you wanted.
 
 Most Catalyst applications use a template system to generate their HTML,
-and though there are several template systems available, Template
-Toolkit is probably the most popular.
+and though there are several template systems available, 
+L<Template Toolkit|Template> is probably the most popular.
 
 Once again, the Catalyst developers have done all the hard work, and
 made things easy for the rest of us. Catalyst::View::TT provides the
@@ -997,7 +997,7 @@ Then you need a template. Here's the one from Agave:
 
 =head3 Using XML::Feed
 
-A more robust solution is to use XML::Feed, as was done in the Catalyst
+A more robust solution is to use L<XML::Feed>, as was done in the Catalyst
 Advent Calendar. Assuming we have a C<view> action that populates
 'entries' with some DBIx::Class iterator, the code would look something
 like this:
