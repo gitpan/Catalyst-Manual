@@ -33,9 +33,12 @@ to go into this C<end> method; see L<Catalyst::Plugin::FillInForm>).
 
         if ( scalar @{ $c->error } ) {
             $c->stash->{errors}   = $c->error;
+            for my $error ( @{ $c->error } ) {
+                $c->log->error($error);
+            }
             $c->stash->{template} = 'errors.tt';
             $c->forward('MyApp::View::TT');
-            $c->error(0);
+            $c->clear_errors;
         }
 
         return 1 if $c->response->status =~ /^3\d\d$/;
@@ -133,7 +136,7 @@ reference.
   sub add_item : Local {
      my ( $self, $c ) = @_;
 
-     my $item_id = $c->req->param("item");
+     my $item_id = $c->req->params->{item};
 
      push @{ $c->session->{items} }, $item_id;
 
@@ -373,22 +376,22 @@ the user is a member.
                  },
              },
          },
-     },   
+     },
   );
 
   package MyApp::Controller::Root;
   use Moose;
   use namespace::autoclean;
-  
+
   BEGIN { extends 'Catalyst::Controller' }
-  
+
   __PACKAGE__->config(namespace => '');
-  
+
   sub login : Local {
      my ($self, $c) = @_;
 
-     if (    my $user = $c->req->param("user")
-         and my $password = $c->req->param("password") )
+     if ( my $user = $c->req->params->{user}
+         and my $password = $c->req->param->{password} )
      {
          if ( $c->authenticate( username => $user, password => $password ) ) {
               $c->res->body( "hello " . $c->user->name );
@@ -454,7 +457,7 @@ pretty nasti!). For example:
     sub feed_moose : Local {
         my ( $self, $c ) = @_;
 
-        $c->model( "Moose" )->eat( $c->req->param("food") );
+        $c->model( "Moose" )->eat( $c->req->params->{food} );
     }
 
 With this action, anyone can just come into the moose cage and feed
@@ -476,7 +479,7 @@ And now our action should look like this:
         my ( $self, $c ) = @_;
 
         if ( $c->check_roles( "moose_feeder" ) ) {
-            $c->model( "Moose" )->eat( $c->req->param("food") );
+            $c->model( "Moose" )->eat( $c->req->params->{food} );
         } else {
             $c->stash->{error} = "unauthorized";
         }
@@ -745,7 +748,7 @@ display your data; you can choose to generate HTML, PDF files, or plain
 text if you wanted.
 
 Most Catalyst applications use a template system to generate their HTML,
-and though there are several template systems available, 
+and though there are several template systems available,
 L<Template Toolkit|Template> is probably the most popular.
 
 Once again, the Catalyst developers have done all the hard work, and
@@ -1481,7 +1484,7 @@ information on passing arguments via C<forward>.)
   use base qw/Catalyst::Controller/;
 
   sub key1 : Chained('/')
-  
+
 =head2 Extending RenderView (formerly DefaultEnd)
 
 The recommended approach for an C<end> action is to use
@@ -1512,7 +1515,7 @@ you can set it up like this:
       # do stuff here
     }
 
-  
+
 
 =head1 Deployment
 
@@ -1521,15 +1524,15 @@ including web server engines and tips to improve application efficiency.
 
 =head2 mod_perl Deployment
 
-mod_perl is the best solution for many applications, but we'll list some pros
-and cons so you can decide for yourself.  The other production deployment
-option is FastCGI, for which see below.
+mod_perl is not the best solution for many applications, but we'll list some
+pros and cons so you can decide for yourself. The other (recommended)
+deployment option is FastCGI, for which see below.
 
 =head3 Pros
 
 =head4 Speed
 
-mod_perl is very fast and your app will benefit from being loaded in memory
+mod_perl is fast and your app will be loaded in memory
 within each Apache process.
 
 =head4 Shared memory for multiple apps
@@ -1559,6 +1562,14 @@ C<ErrorDocument 502> page to report that your app is down for maintenance.
 
 It is not possible to run two different versions of the same application in
 the same Apache instance because the namespaces will collide.
+
+=head4 Cannot run different versions of libraries.
+
+If you have two differnet applications which run on the same machine,
+which need two different versions of a library then the only way to do
+this is to have per-vhost perl interpreters (with different library paths).
+This is entirely possible, but nullifies all the memory sharing benefits that
+you get from having multiple applications sharing the same interpreter.
 
 =head4 Setup
 
@@ -1758,7 +1769,11 @@ than when using mod_perl.
 
 mod_fastcgi for Apache is a third party module, and can be found at
 L<http://www.fastcgi.com/>.  It is also packaged in many distributions,
-for example, libapache2-mod-fastcgi in Debian.
+for example, libapache2-mod-fastcgi in Debian. You will also need to install
+the L<FCGI> module from cpan.
+
+Important Note! If you experience difficulty properly rendering pages,
+try disabling Apache's mod_deflate (Deflate Module), e.g. 'a2dismod deflate'.
 
 =head4 2. Configure your application
 
