@@ -345,7 +345,7 @@ method" that you don't want to be an action at all, then just define
 the method without any attribute -- you can call it in your code, but 
 the Catalyst dispatcher will ignore it.)
 
-There are five types of "special" build-in C<:Private> actions: 
+There are five types of "special" built-in C<:Private> actions:
 C<begin>, C<end>, C<default>, C<index>, and C<auto>.
 
 =over 4
@@ -680,7 +680,7 @@ applications rely on DBIx::Class, as will this tutorial.
 
 Although DBIx::Class has included support for a C<create=dynamic> mode 
 to automatically read the database structure every time the 
-application starts, it's use is no longer recommended.  While it can 
+application starts, its use is no longer recommended.  While it can
 make for "flashy" demos, the use of the C<create=static> mode we use 
 below can be implemented just as quickly and provides many advantages 
 (such as the ability to add your own methods to the overall DBIC 
@@ -821,7 +821,7 @@ when you launch the application).
 B<NOTE:> Older versions of 
 L<Catalyst::Model::DBIC::Schema|Catalyst::Model::DBIC::Schema> use the 
 deprecated DBIx::Class C<load_classes> technique instead of the newer 
-C<load_namspaces>.  For new applications, please try to use 
+C<load_namespaces>.  For new applications, please try to use 
 C<load_namespaces> since it more easily supports a very useful DBIC 
 technique called "ResultSet Classes."  If you need to convert an 
 existing application from "load_classes" to "load_namespaces," you can 
@@ -1307,7 +1307,7 @@ C<1;> on a line by itself.
 
 The C<many_to_many> relationship is optional, but it makes it
 easier to map a book to its collection of authors.  Without 
-it, we would have to "walk" though the C<book_author> table as in 
+it, we would have to "walk" through the C<book_author> table as in 
 C<$book-E<gt>book_author-E<gt>first-E<gt>author-E<gt>last_name> (we 
 will see examples on how to use DBIx::Class objects in your code soon, 
 but note that because C<$book-E<gt>book_author> can return multiple 
@@ -1597,5 +1597,6 @@ Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
 L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.80/trunk/lib/Catalyst/Manual/Tutorial/>.
 
-Copyright 2006-2010, Kennedy Clark, under Creative Commons License
+Copyright 2006-2010, Kennedy Clark, under the
+Creative Commons Attribution Share-Alike License Version 3.0
 (L<http://creativecommons.org/licenses/by-sa/3.0/us/>).

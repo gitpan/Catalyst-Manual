@@ -377,7 +377,7 @@ to something along the lines of the following:
     | /books/url_create/*/*/*             | /books/url_create                    |
     '-------------------------------------+--------------------------------------'
 
-C<url_create> has disappeared form the "Loaded Path actions" section
+C<url_create> has disappeared from the "Loaded Path actions" section
 but it now shows up under the newly created "Loaded Chained actions"
 section.  And the "/*/*/*" portion clearly shows our requirement for
 three arguments.
@@ -761,7 +761,7 @@ equivalent.
 
 =head2 Try the Delete Feature
 
-One you save the Books controller, the server should automatically restart.
+Once you save the Books controller, the server should automatically restart.
 The C<delete> method should now appear in the "Loaded Chained actions" section
 of the startup debug output:
 
@@ -886,7 +886,7 @@ query parameter:
     ...
     <div id="content">
         [%# Status and error messages %]
-        <span class="message">[% status_msg || c.request.params.status_msg %]</span>
+        <span class="message">[% status_msg || c.request.params.status_msg | html %]</span>
         <span class="error">[% error_msg %]</span>
         [%# This is where TT will stick all of your template's contents. -%]
         [% content %]
@@ -1268,7 +1268,7 @@ And, because the concatenation logic was encapsulated inside our
 Result Class, it keeps the code inside our TT template nice and clean
 (remember, we want the templates to be as close to pure HTML markup as
 possible). Obviously, this capability becomes even more useful as you
-use to to remove even more complicated row-specific logic from your
+use it to remove even more complicated row-specific logic from your
 templates!
 
 
@@ -1361,7 +1361,7 @@ huge comments to clue people in to the gist of our code. The view code
 is now self-documenting and readable enough that you could probably get 
 by with no comments at all. All of the "complex" work is being done in 
 our Result Class methods (and, because we have broken the code into 
-nice, modular chucks, the Result Class code is hardly something you 
+nice, modular chunks, the Result Class code is hardly something you 
 would call complex).
 
 As we saw in this section, always strive to keep your view AND 
@@ -1384,5 +1384,6 @@ Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
 L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.80/trunk/lib/Catalyst/Manual/Tutorial/>.
 
-Copyright 2006-2010, Kennedy Clark, under Creative Commons License
+Copyright 2006-2010, Kennedy Clark, under the
+Creative Commons Attribution Share-Alike License Version 3.0
 (L<http://creativecommons.org/licenses/by-sa/3.0/us/>).

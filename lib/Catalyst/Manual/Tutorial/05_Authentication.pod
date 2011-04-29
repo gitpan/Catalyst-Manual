@@ -99,7 +99,7 @@ C<myapp02.sql> in your editor and insert:
             role TEXT
     );
     CREATE TABLE user_role (
-            user_id INTEGER REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
             role_id INTEGER REFERENCES role(id) ON DELETE CASCADE ON UPDATE CASCADE,
             PRIMARY KEY (user_id, role_id)
     );
@@ -166,7 +166,7 @@ C<1;>:
     #     2) Name of has_many() relationship this many_to_many() is shortcut for
     #     3) Name of belongs_to() relationship in model class of has_many() above
     #   You must already have the has_many() defined to use a many_to_many().
-    __PACKAGE__->many_to_many(roles => 'user_roles', 'role');
+    __PACKAGE__->many_to_many(roles => 'user_roles', 'role_id');
 
 The code for this update is obviously very similar to the edits we made
 to the C<Book> and C<Author> classes created in Chapter 3 with one
@@ -229,7 +229,7 @@ C<StackTrace> is new):
         Authentication
 
         Session
-        Session::Store::FastMmap
+        Session::Store::File
         Session::State::Cookie
     /;
 
@@ -254,16 +254,15 @@ the Makefile.PL file something like this:
 
     requires 'Catalyst::Plugin::Authentication';
     requires 'Catalyst::Plugin::Session';
-    requires 'Catalyst::Plugin::Session::Store::FastMmap';
+    requires 'Catalyst::Plugin::Session::Store::File';
     requires 'Catalyst::Plugin::Session::State::Cookie';
 
 Note that there are several options for
 L<Session::Store|Catalyst::Plugin::Session::Store>.
-L<Session::Store::Memcached|Catalyst::Plugin::Session::Store::Memcached> or
-L<Session::Store::FastMmap|Catalyst::Plugin::Session::Store::FastMmap> is
+L<Session::Store::Memcached|Catalyst::Plugin::Session::Store::Memcached> is
 generally a good choice if you are on Unix.  If you are running on
-Windows, try
-L<Session::Store::File|Catalyst::Plugin::Session::Store::File>. Consult
+Windows
+L<Session::Store::File|Catalyst::Plugin::Session::Store::File> is fine. Consult
 L<Session::Store|Catalyst::Plugin::Session::Store> and its subclasses
 for additional information and options (for example to use a database-
 backed session store).
@@ -374,7 +373,8 @@ and update the definition of C<sub index> to match:
             }
         } else {
             # Set an error message
-            $c->stash(error_msg => "Empty username or password.");
+            $c->stash(error_msg => "Empty username or password.")
+                unless ($c->user_exists);
         }
 
         # If either of above don't work out, send to the login page
@@ -552,7 +552,7 @@ use of an IF-THEN-ELSE construct in TT).
 =head2 Try Out Authentication
 
 The development server should have reloaded each time we edited one of
-the Controllers in the previous section. Now trying going to
+the Controllers in the previous section. Now try going to
 L<http://localhost:3000/books/list> and you should be redirected to the
 login page, hitting Shift+Reload or Ctrl+Reload if necessary (the "You
 are already logged in" message should I<not> appear -- if it does, click
@@ -698,7 +698,7 @@ C<set_hashed_passwords.pl> in your editor and enter the following text:
         $user->update;
     }
 
-EncodedColumn lets us simple call C<$user->check_password($password)>
+EncodedColumn lets us simply call C<$user->check_password($password)>
 to see if the user has supplied the correct password, or, as we show
 above, call C<$user->update($new_password)> to update the hashed
 password stored for this user.
@@ -884,5 +884,6 @@ Please report any errors, issues or suggestions to the author.  The
 most recent version of the Catalyst Tutorial can be found at
 L<http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.80/trunk/lib/Catalyst/Manual/Tutorial/>.
 
-Copyright 2006-2010, Kennedy Clark, under Creative Commons License
+Copyright 2006-2010, Kennedy Clark, under the
+Creative Commons Attribution Share-Alike License Version 3.0
 (L<http://creativecommons.org/licenses/by-sa/3.0/us/>).
