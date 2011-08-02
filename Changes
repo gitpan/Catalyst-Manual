@@ -1,5 +1,21 @@
 Revision history for Catalyst-Manual
 
+5.8008 2 Aug 2011
+    - Tutorial chaper 3
+      - Remove note about hacking tests to require MyApp so that MyApp->path_to
+        works. Application components should compile independently, and
+        therefore explain this and show configuring components from the
+        app class.
+
+    - Tutorial appendix
+      - Fix confusing mix of singular and plural table names in the MySQL
+        section to be plural, as per the rest of the tutorial.
+
+    - Cookbook
+      - Remove suggestion to generate RSS feeds using Template Toolkit.
+        This is a horrible idea, and it's very very easy to generate an
+        invalid feed.
+
 5.8007 29 Feb 2011
     - Tutorial
       - Switch to use of DBIx::Class::PassphraseColumn for hashed & salted
