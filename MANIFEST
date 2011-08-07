@@ -18,6 +18,15 @@ lib/Catalyst/Manual/Actions.pod
 lib/Catalyst/Manual/CatalystAndMoose.pod
 lib/Catalyst/Manual/Components.pod
 lib/Catalyst/Manual/Cookbook.pod
+lib/Catalyst/Manual/Deployment.pod
+lib/Catalyst/Manual/Deployment/Apache/FastCGI.pod
+lib/Catalyst/Manual/Deployment/Apache/mod_perl.pod
+lib/Catalyst/Manual/Deployment/DevelopmentServer.pod
+lib/Catalyst/Manual/Deployment/FastCGI.pod
+lib/Catalyst/Manual/Deployment/IIS/FastCGI.pod
+lib/Catalyst/Manual/Deployment/lighttpd/FastCGI.pod
+lib/Catalyst/Manual/Deployment/nginx/FastCGI.pod
+lib/Catalyst/Manual/Deployment/SharedHosting.pod
 lib/Catalyst/Manual/DevelopmentProcess.pod
 lib/Catalyst/Manual/ExtendingCatalyst.pod
 lib/Catalyst/Manual/Internals.pod
