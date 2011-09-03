@@ -193,15 +193,12 @@ Virtual Machine.  This document uses the term "host machine" to refer to
 the physical machine where you will run the virtualization software and
 boot up the VM.  The terms "guest machine" or just "VM" refer to the
 virtual machine itself -- the thing where you actually do the tutorial
-and that you boot up on the "host machine".
+(and that you boot up on the "host machine").
 
-Also, to reduce download size, the Tutorial VM just includes a minimal
-command-line environment.  In general, it is expected that people will
-boot up the Tutorial VM on their main desktop (the "host machine" using
-the terminology above) and then use that main desktop machine to SSH and
-web browse into the "guest VM" as they work through the tutorial.  If
-you wish to install X-Windows (or any other packages), just use the
-C<aptitude> (or C<apt-get>) Debian commands.
+B<Note:> Throughout the tutorial, we will shows the UNIX shell prompt as
+"C<$>".  If you are using the Tutorial VM, the prompt will really be
+"C<catalyst@catalyst:~$>" (where "C<~"> will change to show your
+current directory), but we will keep it short and just use "C<$>".
 
 
 =over 4
@@ -216,9 +213,9 @@ B<(and everything else they do for the Perl community)!>
 
 =item 2
 
-Uncompress the image:
+Uncompress the image on the "host machine":
 
-    tar zxvf CatalystTutorial.tgz
+    MAINCOMPUTER:~$ tar zxvf CatalystTutorial.tgz
 
 =item 3
 
@@ -228,13 +225,14 @@ L<http://www.virtualbox.org/>.
 
 =item 4
 
-Once you get a login prompt, enter the username B<root> and a password
-for C<catalyst>.  You should now be at a prompt that looks like:
+Once you get a login prompt, enter the username B<catalyst> and a
+password for C<catalyst>.  You should now be at a prompt that looks
+like:
 
-    catalyst login: root
+    catalyst login: catalyst
     Password: catalyst
     ...
-    root@catalyst:~#
+    catalyst@catalyst:~$
 
 =item 5
 
@@ -252,7 +250,7 @@ The image it design to automatically use a DHCP-assigned address.
 Try to ping this IP address from your "host machine" (main desktop):
 
 
-    MainComputer:~$ ping 192.168.0.12
+    MAINCOMPUTER:~$ ping 192.168.0.12
     PING 192.168.0.12 (192.168.0.12) 56(84) bytes of data.
     64 bytes from 192.168.0.12: icmp_req=1 ttl=255 time=4.97 ms
     64 bytes from 192.168.0.12: icmp_req=2 ttl=255 time=3.43 ms
@@ -279,13 +277,13 @@ tutorial.
 B<From your main desktop machine>, open an SSH client and connect to the
 IP address found in the previous step.  You should get a login prompt
 (accept the SSH key if you get a warning message about that).  Login
-with the same username and password as we used in Step 4: B<root> /
+with the same username and password as we used in Step 4: B<catalyst> /
 B<catalyst>
 
-    catalyst login: root
+    catalyst login: catalyst
     Password: catalyst
     ...
-    root@catalyst:~#
+    catalyst@catalyst:~$
 
 
 =item 7
@@ -317,26 +315,79 @@ back and carefully check each of the steps above.
 
 =item 9
 
-B<Optional:> The VI/VIM editor is already installed on the Tutorial
-Virtual Machine.  In order to reduce the size of the download, Emacs is
-not pre-installed.  Since people obviously have very strong opinions
-about which editor is best, :-) Debian fortunately make it very easy to
-install Emacs:
+B<Optional:> Also, to reduce download size, the Tutorial VM just
+includes a minimal command-line environment.  You are free to use
+Debian's very capable C<apt> package manager to install other packages.
+You will first want to pull the apt cache files with C<aptitude update>
+(or C<apt-get update> if you prefer apt-get).
 
-    $ aptitude install emacs
+The VI/VIM editor is already installed on the Tutorial Virtual Machine.
+In order to reduce the size of the download, Emacs is not pre-installed.
+Since people obviously have very strong opinions about which editor is
+best, :-) fortunately it's very easy to install Emacs:
+
+    $ sudo aptitude update
+    $ sudo aptitude install emacs
+
+In general, it is expected that people will
+boot up the Tutorial VM on their main desktop (the "host machine" using
+the terminology above) and then use that main desktop machine to SSH and
+web browse into the "guest VM" as they work through the tutorial.  If
+you wish to install X Windows (or any other packages), just use the
+C<aptitude> (or C<apt-get>) Debian commands.
+
+For example, to install X Windows with Fluxbox (a lightweight
+WindowManager -- it is great for things like this tutorial since it's
+about 1/10th the size of other common X Windows environments), you can
+do:
+
+    $ sudo aptitude update
+    $ sudo aptitude install xorg fluxbox iceweasel
+
+And then start X Windows from the B<VM Console> with this command:
+
+    $ startx
+
+Note that if you want to start Fluxbox from an SSH session, you can use
+the C<sudo dpkg-reconfigure x11-common> and select "anybody" from the
+menu.  Otherwise, you will need to be on the actual "VM console" to
+start it.
+
+If you have a preference for the Gnome desktop environment, you can do:
+
+    $ sudo aptitude update
+    $ sudo ptitude install gnome iceweasel
+    $
+    $ # You can reboot or start with 'startx', we will just reboot here
+    $ reboot
+
+    $ sudo aptitude install kde iceweasel
+
+For KDE, just substitude the package name "C<kde>" for "C<gnome>" above.
+
+Note that C<iceweasel> is basically used to install Firefox on Debian
+boxes.  You can start it under X Windows with either the C<firefox>
+command or the C<iceweasel> command (or use the menus).  You can get
+more information on Iceweasel at L<http://wiki.debian.org/Iceweasel>.
+
+Also, you might need to add more memory to your virtual machine if you
+want to run X Windows (or other tools that might require additional
+memory).  Consult the documentation for you virtualization software
+for instructions on how to do this (it's usually pretty simple).
+
 
 =back
 
 
 You may note that the Tutorial Virtual Machine uses L<local::lib> so
-that the Perl modules are run from ~/perl5 (in this case, /root/perl5)
-vs. the usual location of your "system Perl".  We recommend that you
-also consider using this very handy module.  It can greatly ease the
-process of maintaining and testing different combinations or Perl
-modules across development, staging, and production servers.  (The
-"relocatable Perl" feature can also be used to to run both the modules
-B<and> Perl itself from your home directory [or any other directory you
-chose]).
+that the Perl modules are run from ~/perl5 (in this case,
+/home/catalyst/perl5) vs. the usual location of your "system Perl".  We
+recommend that you also consider using this very handy module.  It can
+greatly ease the process of maintaining and testing different
+combinations or Perl modules across development, staging, and production
+servers.  (The "relocatable Perl" feature can also be used to to run
+both the modules B<and> Perl itself from your home directory [or any
+other directory you chose]).
 
 B<Note>: Please provide feedback on how the Virtual Machine approach for
 the tutorial works for you.  If you have suggestions or comments, you
@@ -387,10 +438,15 @@ other machine (including the "host machine") into the VM.  Some virtual
 machine host environments let you configure a "static NAT" or "port
 forwarding" to reach the guest OS, but others omit this functionality.
 
+Note: NAT mode can work fine if you install X Windows and do the whole
+tutorial locally on the actual VM vs. using SSH and a web browser from
+your host machine.
+
 "Local host only" mode let's the guest VM and the host machine talk on a
 "private subnet" that other devices in your network cannot reach.  This
 can work as long as you don't need to go from the VM to the Internet
 (for example, to install other Debian packages).
+
 
 Consult the documentation on your virtual machine host environment for
 help configuring the options above.  Here are some links that might

@@ -22,4 +22,4 @@ no_index:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://dev.catalyst.perl.org/repos/Catalyst/Catalyst-Manual/5.80/trunk/
-version: 5.9001
+version: 5.9002
