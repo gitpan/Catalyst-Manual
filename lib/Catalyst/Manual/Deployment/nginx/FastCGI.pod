@@ -42,7 +42,7 @@ The server configuration block should look roughly like:
             fastcgi_param  SERVER_ADDR        $server_addr;
             fastcgi_param  SERVER_PORT        $server_port;
             fastcgi_param  SERVER_NAME        $server_name;
-        
+
             # Adjust the socket for your applications!
             fastcgi_pass   unix:$docroot/myapp.socket;
         }
@@ -60,14 +60,32 @@ prefix of your application, and PATH_INFO would be everything in addition.
 
 As an example, if your application is rooted at /myapp, you would configure:
 
-    fastcgi_param  SCRIPT_NAME /myapp/;
-    fastcgi_param  PATH_INFO   $fastcgi_script_name;
+    rewrite ^/myapp$ /myapp/ permanent;
+    location /myapp/ {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_NAME /myapp/;
+        fastcgi_param PATH_INFO   $fastcgi_script_name;
+        fastcgi_pass unix:/tmp/mediaapi.socket;
+    }
 
 C<$fastcgi_script_name> would be "/myapp/path/of/the/action".  Catalyst will
 process this accordingly and setup the application base as expected.
 
 This behavior is somewhat different from Apache and lighttpd, but is still
 functional.
+
+Note that the rewrite may not be needed with newer versions of nginx,
+and the paths must be exactly as specified - the trailing slash in the
+location block and the SCRIPT name are important.
+
+=head2 SSL
+
+Make sure that nginx passes this to your fastcgi. To ensure this, you need
+the following in your nginx config for the SSL vhost:
+
+    fastcgi_param  HTTPS on
+
+=head1 MORE INFO
 
 For more information on nginx, visit:
 L<http://nginx.net>

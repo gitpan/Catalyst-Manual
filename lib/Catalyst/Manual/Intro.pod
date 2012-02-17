@@ -23,7 +23,7 @@ possible to do things in a different way. Other web frameworks are
 I<initially> simpler to use, but achieve this by locking the programmer
 into a single set of tools. Catalyst's emphasis on flexibility means
 that you have to think more to use it. We view this as a feature.  For
-example, this leads to Catalyst being more suited to system integration
+example, this leads to Catalyst being better suited to system integration
 tasks than other web frameworks.
 
 =head3 MVC
@@ -53,7 +53,7 @@ L<Mason|HTML::Mason>, L<HTML::Template>...
 =item * B<Controller>
 
 Control the whole request phase, check parameters, dispatch actions, flow
-control. Catalyst itself!
+control. This is the meat of where Catalyst works.
 
 =back
 
@@ -121,6 +121,12 @@ interesting engine is L<Catalyst::Engine::HTTP::Prefork> - available from CPAN
 separately - which will turn the built server into a fully fledged production
 ready server (although you'll probably want to run it behind a front end proxy
 if you end up using it).
+
+=item * PSGI Support
+
+Starting with Catalyst version 5.9 Catalyst ships with L<PSGI> integration
+for even more powerful and flexible testing and deployment options.  See
+L<Catalyst::PSGI> for details.
 
 =back
 
@@ -804,14 +810,18 @@ application (e.g. http://localhost:3000/ ):
 
     package MyApp::Controller::Root;
     use base 'Catalyst::Controller';
+
     # Sets the actions in this controller to be registered with no prefix
     # so they function identically to actions created in MyApp.pm
+
     __PACKAGE__->config( namespace => '');
+
     sub default : Path  {
         my ( $self, $context ) = @_;
         $context->response->status(404);
         $context->response->body('404 not found');
     }
+
     1;
 
 
@@ -820,9 +830,9 @@ The code
     __PACKAGE__->config( namespace => '' );
 
 makes the controller act as if its namespace is empty.  As you'll see
-below, an empty namespace makes many of the URL-matching attributes,
-such as :Path, :Local and :Global matches, match at the start of the
-URL path.
+below, an empty namespace makes many of the URL-matching attributes, such
+as :Path and :Local match at the start of the URL path (i.e. the
+application root).
 
 =back
 
@@ -850,20 +860,30 @@ subroutine name together determine the path.
 =item * Root-level (C<:Global>)
 
     package MyApp::Controller::Foo;
-    sub foo : Global { }
 
-Matches http://localhost:3000/foo - that is, the action is mapped
-directly to the controller namespace, ignoring the function name.
+    sub bar : Global {
+        my ($self, $c) = @_;
+        $c->res->body(
+          $c->res->body('sub bar in Controller::Foo triggered on a request for '
+                         . $c->req->uri));
+    }
 
-C<:Global> always matches from root: it is sugar for C<:Path('/methodname')>.
-C<:Local> is simply sugar for C<:Path('methodname')>, which takes the package
-namespace as described above.
+1;
 
-    package MyApp::Controller::Root;
-    __PACKAGE__->config( namespace => '');
-    sub foo : Local { }
+Matches http://localhost:3000/bar - that is, the action is mapped
+directly to the method name, ignoring the controller namespace.
 
-Use whichever makes the most sense for your application.
+C<:Global> always matches from the application root: it is simply
+shorthandfor C<:Path('/methodname')>.  C<:Local> is shorthand for
+C<:Path('methodname')>, which takes the controller namespace as described
+above.
+
+Usage of the C<Global> handler is rare in all but very old Catalyst
+applications (e.g. before Catalyst 5.7).  The use cases where C<Global>
+used to make sense are now largely replaced by the C<Chained> dispatch
+type, or by empty C<Path> declarations on an controller action.  C<Global>
+is still included in Catalyst for backwards compatibility, although
+legitimate use-cases for it may still exist.
 
 =item * Changing handler behaviour: eating arguments (C<:Args>)
 
@@ -1099,7 +1119,7 @@ turn.
     sub auto : Private { }
 
 C<auto>, however, doesn't override like this: providing they exist,
-C<MyApp::auto>, C<MyApp::Controller::Catalog::auto> and
+C<MyApp::Controller::Root::auto>, C<MyApp::Controller::Catalog::auto> and
 C<MyApp::Catalog::Order::auto> would be called in turn.
 
 Here are some examples of the order in which the various built-ins
