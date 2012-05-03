@@ -1,4 +1,5 @@
 Changes
+Cookbook.pod.patch
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AuthorRequires.pm
@@ -48,6 +49,7 @@ lib/Catalyst/Manual/Tutorial/09_AdvancedCRUD/09_FormHandler.pod
 lib/Catalyst/Manual/Tutorial/10_Appendices.pod
 lib/Catalyst/Manual/WritingPlugins.pod
 Makefile.PL
+man.patch
 MANIFEST			This list of files
 META.yml
 README

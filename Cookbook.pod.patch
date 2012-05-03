@@ -1,0 +1,8 @@
+2035a2036,2042
+> 
+> =head1 Deploy
+> 
+> There is catalyst cookbook L<http://community.opscode.com/cookbooks/catalyst> for fast and
+> easy deploy of catalyst application via chef. See introduction paper on L<http://github.com/melezhik/cookbooks/wiki/Catalyst-cookbook-intro>
+> 
+> 
