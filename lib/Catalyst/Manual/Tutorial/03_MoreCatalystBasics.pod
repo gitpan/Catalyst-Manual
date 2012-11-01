@@ -109,7 +109,7 @@ if you are using Strawberry Perl.)
 =head1 EDIT THE LIST OF CATALYST PLUGINS
 
 One of the greatest benefits of Catalyst is that it has such a large
-library of bases classes and plugins available that you can use easily
+library of base classes and plugins available that you can use to easily
 add functionality to your application. Plugins are used to seamlessly
 integrate existing Perl modules into the overall Catalyst framework. In
 general, they do this by adding additional methods to the C<context>
@@ -143,16 +143,16 @@ If you prefer, there are several other ways to enable debug output:
 
 =item *
 
-Use the C<$c-E<gt>debug> method on the C<$c> Catalyst context object
+the C<$c-E<gt>debug> method on the C<$c> Catalyst context object
 
 =item *
 
-The C<-d> option to C<script/myapp_server.pl>
+the C<-d> option on the C<script/myapp_server.pl> script
 
 =item *
 
-The C<CATALYST_DEBUG=1> environment variable (or use C<CATALYST_DEBUG=0>
-to temporarily disable debug output).
+the C<CATALYST_DEBUG=1> environment variable (or C<CATALYST_DEBUG=0>
+to temporarily disable debug output)
 
 =back
 
@@ -206,7 +206,7 @@ images and CSS files, from the development server.
 
 =back
 
-For our application, we want to add one new plugin into the mix.  To do
+For our application, we want to add one new plugin to the mix.  To do
 this, edit C<lib/MyApp.pm> (this file is generally referred to as your
 I<application class>) and delete the lines with:
 
@@ -307,7 +307,7 @@ actions:
 Then edit C<lib/MyApp/Controller/Books.pm> (as discussed in
 L<Chapter 2|Catalyst::Manual::Tutorial::02_CatalystBasics> of
 the Tutorial, Catalyst has a separate directory under C<lib/MyApp> for
-each of the three parts of MVC: C<Model>, C<View>, and C<Controller>)
+each of the three parts of MVC: C<Model>, C<View> and C<Controller>)
 and add the following method to the controller:
 
     =head2 list
@@ -531,7 +531,7 @@ C<root/src>.
 
 Please stick with the settings above for the duration of the tutorial,
 but feel free to use whatever options you desire in your applications
-(as with most things Perl, there's more than one way to do it...).
+(as with most things in Perl, there's more than one way to do it...).
 
 B<Note:> We will use C<root/src> as the base directory for our template
 files, with a full naming convention of
@@ -855,8 +855,8 @@ when you launch the application).
 Additionally, the C<lib/MyApp/Schema.pm> model can easily be loaded
 outside of Catalyst, for example, in command-line utilities and/or cron
 jobs. C<lib/MyApp/Model/DB.pm> provides a very thin "bridge" between
-Catalyst this external database model.  Once you see how we can add some
-powerful features to our DBIC model in
+Catalyst and this external database model.  Once you see how we can
+add some powerful features to our DBIC model in
 L<Chapter 4|Catalyst::Manual::Tutorial::04_BasicCRUD>, the elegance
 of this approach will start to become more obvious.
 
@@ -881,9 +881,9 @@ L<DBIx::Class::Schema::Loader> version C<0.05000> or later.
 =head1 ENABLE THE MODEL IN THE CONTROLLER
 
 Open C<lib/MyApp/Controller/Books.pm> and un-comment the model code we
-left disabled earlier so that your version matches the following (un-
-comment the line containing C<[$c-E<gt>model('DB::Book')-E<gt>all]> and
-delete the next 2 lines):
+left disabled earlier so that your version matches the following
+(un-comment the line containing C<[$c-E<gt>model('DB::Book')-E<gt>all]>
+and delete the next 2 lines):
 
     =head2 list
     
@@ -1381,7 +1381,7 @@ alternate way to specify the trace option just in case):
     $ DBIC_TRACE=1 script/myapp_server.pl -r
 
 Make sure that the application loads correctly and that you see the
-three dynamically created model class (one for each of the Result
+three dynamically created model classes (one for each of the Result
 Classes we created).
 
 Then hit the URL L<http://localhost:3000/books/list> with your browser
@@ -1461,11 +1461,11 @@ html" at the end of every field where a user has control over the
 information that can appear in that field (and can therefore inject
 markup or code if you don't "neutralize" those fields).  In addition to
 "| html", Template Toolkit has a variety of other useful filters that
-can found in the documentation for L<Template::Filters>.  (While we are
-on the topic of security and escaping of dangerous values, one of the
-advantages of using tools like DBIC for database access or
+can be found in the documentation for L<Template::Filters>.  (While we
+are on the topic of security and escaping of dangerous values, one of
+the advantages of using tools like DBIC for database access or
 L<HTML::FormFu> for form management [see
-L<Chapter 9|Catalyst::Manual::Tutorial::09_AdvancedCRUD::09_FormFu>
+L<Chapter 9|Catalyst::Manual::Tutorial::09_AdvancedCRUD::09_FormFu>]
 is that they automatically handle most escaping for you and therefore
 dramatically increase the security of your app.)
 
@@ -1619,12 +1619,12 @@ C<$c-E<gt>stash-E<gt>{template}> line has changed):
 You should now be able to access the L<http://localhost:3000/books/list>
 URL as before.
 
-B<NOTE:> Please note that if you use the default template technique, you
+B<NOTE:> If you use the default template technique, you
 will B<not> be able to use either the C<$c-E<gt>forward> or the
 C<$c-E<gt>detach> mechanisms (these are discussed in Chapter 2 and
 Chapter 9 of the Tutorial).
 
-B<IMPORTANT:> Make sure that you do NOT skip the following section
+B<IMPORTANT:> Make sure that you do B<not> skip the following section
 before continuing to the next chapter 4 Basic CRUD.
 
 
