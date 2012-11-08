@@ -23,4 +23,4 @@ no_index:
 resources:
   license: http://dev.perl.org/licenses/
   repository: git://git.shadowcat.co.uk/catagits/Catalyst-Runtime.git
-version: 5.9005
+version: 5.9006
