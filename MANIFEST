@@ -1,17 +1,4 @@
 Changes
-inc/Module/AutoInstall.pm
-inc/Module/Install.pm
-inc/Module/Install/AuthorRequires.pm
-inc/Module/Install/AuthorTests.pm
-inc/Module/Install/AutoInstall.pm
-inc/Module/Install/Base.pm
-inc/Module/Install/Can.pm
-inc/Module/Install/Fetch.pm
-inc/Module/Install/Include.pm
-inc/Module/Install/Makefile.pm
-inc/Module/Install/Metadata.pm
-inc/Module/Install/Win32.pm
-inc/Module/Install/WriteAll.pm
 lib/Catalyst/Manual.pm
 lib/Catalyst/Manual/About.pod
 lib/Catalyst/Manual/Actions.pod
@@ -31,7 +18,6 @@ lib/Catalyst/Manual/DevelopmentProcess.pod
 lib/Catalyst/Manual/ExtendingCatalyst.pod
 lib/Catalyst/Manual/Internals.pod
 lib/Catalyst/Manual/Intro.pod
-lib/Catalyst/Manual/Plugins.pm
 lib/Catalyst/Manual/Tutorial.pod
 lib/Catalyst/Manual/Tutorial/01_Intro.pod
 lib/Catalyst/Manual/Tutorial/02_CatalystBasics.pod
@@ -47,11 +33,14 @@ lib/Catalyst/Manual/Tutorial/09_AdvancedCRUD/09_FormFu.pod
 lib/Catalyst/Manual/Tutorial/09_AdvancedCRUD/09_FormHandler.pod
 lib/Catalyst/Manual/Tutorial/10_Appendices.pod
 lib/Catalyst/Manual/WritingPlugins.pod
+maint/bump-version
+maint/Makefile.include
+maint/Makefile.PL.include
 Makefile.PL
 MANIFEST			This list of files
-META.yml
 README
 t/01-use.t
 t/author/pod-coverage.t
 t/author/pod.t
-TODO
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)

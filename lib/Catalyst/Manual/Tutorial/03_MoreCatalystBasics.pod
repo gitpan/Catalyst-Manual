@@ -134,7 +134,7 @@ but a I<flag>.  Although most of the items specified on the C<use
 Catalyst> line of your application class will be plugins, Catalyst
 supports a limited number of flag options (of these, C<-Debug> is the
 most common).  See the documentation for
-C<https://metacpan.org/module/Catalyst|Catalyst.pm> to get details on
+L<https://metacpan.org/module/Catalyst|Catalyst.pm> to get details on
 other flags (currently C<-Engine>, C<-Home>, C<-Log>, and C<-Stats>).
 
 If you prefer, there are several other ways to enable debug output:
@@ -282,7 +282,7 @@ and open C<http://localhost:3000/> in your browser.  You should get a
 screen that starts with "Caught exception in
 MyApp::Controller::Root->index" with sections showing a stacktrace,
 information about the Request and Response objects, the stash (something
-we will learn about soon), the applications configuration configuration.
+we will learn about soon), and the applications configuration.
 B<Just don't forget to remove the die before you continue the tutorial!>
 :-)
 
@@ -400,7 +400,7 @@ C<lib/MyApp/Controller/Books.pm> would match on the URL
 C<http://localhost:3000/books/list>, but "C<:Path('/list')>" would match
 on C<http://localhost:3000/list> (because of the leading slash).  You
 can use C<:Args()> to specify how many arguments an action should
-accept.  See L<Catalyst::Manual::Intro/Action_types> for more
+accept.  See L<Catalyst::Manual::Intro/Action-types> for more
 information and examples.
 
 =item *
