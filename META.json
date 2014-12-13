@@ -5,7 +5,7 @@
       "Kieren Diment <zarquon@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "ExtUtils::MakeMaker version 6.9905, CPAN::Meta::Converter version 2.142060",
+   "generated_by" : "ExtUtils::MakeMaker version 7.04, CPAN::Meta::Converter version 2.143240",
    "license" : [
       "perl_5"
    ],
@@ -56,5 +56,5 @@
          "web" : "http://git.shadowcat.co.uk/gitweb/gitweb.cgi?p=catagits/Catalyst-Manual.git"
       }
    },
-   "version" : "5.9008"
+   "version" : "5.9009"
 }
